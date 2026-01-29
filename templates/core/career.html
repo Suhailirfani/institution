@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Careers – Adabiyya Smart Connect{% endblock %}
+
+{% block content %}
+<!-- Request Header -->
+<div class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h1 class="fw-bold">Join Our Team</h1>
+        <p class="lead mb-0">Build a meaningful career with Adabiyya Modern Academy</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            {% if job_openings %}
+            <div class="d-grid gap-4">
+                {% for job in job_openings %}
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h3 class="h4 card-title fw-bold text-primary">{{ job.title }}</h3>
+                            <span class="badge bg-light text-dark border">{{ job.posted_at|date:"M d, Y" }}</span>
+                        </div>
+                        <p class="card-text text-muted mb-4">{{ job.description|linebreaks }}</p>
+
+                        {% if job.application_link %}
+                        <a href="{{ job.application_link }}" class="btn btn-primary" target="_blank">
+                            Apply Now <i class="bi bi-box-arrow-up-right ms-1"></i>
+                        </a>
+                        {% else %}
+                        <a href="mailto:careers@adabiyya.org?subject=Application for {{ job.title }}"
+                            class="btn btn-primary">
+                            Apply via Email <i class="bi bi-envelope ms-1"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="mb-3">
+                    <i class="bi bi-briefcase text-muted" style="font-size: 4rem;"></i>
+                </div>
+                <h3 class="text-muted">No Current Openings</h3>
+                <p class="text-muted">We don't have any open positions right now. Please check back later.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

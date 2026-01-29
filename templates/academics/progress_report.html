@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm print-area">
+        <div class="card-header bg-white border-bottom">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    <!-- Logo Placeholder -->
+                    <div
+                        style="width:80px; height:80px; background:#f0f0f0; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-mortarboard fs-1 text-muted"></i>
+                    </div>
+                </div>
+                <div class="col-md-8 text-center">
+                    <h2 class="mb-1">Adabiyya Smart Connect</h2>
+                    <h5 class="text-muted">Academic Progress Report</h5>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button onclick="window.print()" class="btn btn-outline-primary btn-sm d-print-none">
+                        <i class="bi bi-printer"></i> Print
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Student Details -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th class="w-25">Name:</th>
+                            <td>{{ student.user.get_full_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Admission No:</th>
+                            <td>{{ student.admission_number }}</td>
+                        </tr>
+                        <tr>
+                            <th>Class:</th>
+                            <td>{{ student.classroom }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th class="w-25">Academic Year:</th>
+                            <td>{{ student.classroom.academic_year }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date of Birth:</th>
+                            <td>{{ student.date_of_birth }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Exam Results -->
+            {% if exams_data %}
+            {% for exam_group in exams_data %}
+            <div class="mb-5">
+                <h4 class="text-primary mb-3">{{ exam_group.exam.name }} <small class="text-muted fs-6">({{
+                        exam_group.exam.date }})</small></h4>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Subject</th>
+                            <th class="text-center">Max Marks</th>
+                            <th class="text-center">Obtained</th>
+                            <th class="text-center">Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for res in exam_group.results %}
+                        <tr>
+                            <td>{{ res.subject.code }} - {{ res.subject.name }}</td>
+                            <td class="text-center">{{ res.max_marks }}</td>
+                            <td class="text-center">{{ res.marks_obtained }}</td>
+                            <td class="text-center">{{ res.grade }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="fw-bold">
+                        <tr>
+                            <td>Total</td>
+                            <td class="text-center">{{ exam_group.max_total }}</td>
+                            <td class="text-center">{{ exam_group.total_marks }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="alert alert-info">
+                No examination records found for this student in the current academic year.
+            </div>
+            {% endif %}
+
+            <!-- Signature Section -->
+            <div class="row mt-5 pt-5">
+                <div class="col-4 text-center">
+                    <div class="border-top border-dark w-75 mx-auto"></div>
+                    <p>Class Teacher</p>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="border-top border-dark w-75 mx-auto"></div>
+                    <p>Parent / Guardian</p>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="border-top border-dark w-75 mx-auto"></div>
+                    <p>Principal</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        .print-area,
+        .print-area * {
+            visibility: visible;
+        }
+
+        .print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .d-print-none {
+            display: none !important;
+        }
+    }
+</style>
+{% endblock %}

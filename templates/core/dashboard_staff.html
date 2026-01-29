@@ -1,0 +1,44 @@
+{% extends "core/dashboard_base.html" %}
+{% load static %}
+
+{% block dashboard_title %}Staff Dashboard{% endblock %}
+
+{% block dashboard_sidebar %}
+  <a class="nav-link" href="#">
+    <i class="bi bi-people"></i> My Students
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-calendar-check"></i> Mark Attendance
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-pencil-square"></i> Enter Marks
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-file-earmark-text"></i> Reports
+  </a>
+{% endblock %}
+
+{% block dashboard_content %}
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='My Classes' icon='bi-book' %}
+    </div>
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Students Assigned' icon='bi-people' %}
+    </div>
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Pending Marks' icon='bi-pencil-square' %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0"><i class="bi bi-list-task me-2"></i>Today's Tasks</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-muted-custom">No tasks assigned for today.</p>
+    </div>
+  </div>
+{% endblock %}
+
+

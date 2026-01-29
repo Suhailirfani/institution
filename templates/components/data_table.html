@@ -1,0 +1,94 @@
+{% comment %}
+Reusable Data Table Component
+Usage: {% include 'components/data_table.html' with table_id='studentsTable' columns=columns data=students %}
+{% endcomment %}
+{% load custom_filters %}
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">
+      {% if table_icon %}<i class="bi {{ table_icon }} me-2"></i>{% endif %}
+      {{ table_title|default:"Data Table" }}
+    </h5>
+    {% if show_search %}
+    <input type="text" class="form-control form-control-sm" style="max-width: 250px;" placeholder="Search..."
+      data-table-search="{{ table_id }}">
+    {% endif %}
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped mb-0" id="{{ table_id }}">
+        <thead>
+          <tr>
+            {% for column in columns %}
+            <th>{{ column.label }}</th>
+            {% endfor %}
+            {% if actions %}
+            <th class="text-end">Actions</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in data %}
+          <tr>
+            {% for column in columns %}
+            <td>
+              {% if column.type == 'badge' %}
+              {% include 'components/status_badge.html' with status=row|getattr:column.field %}
+              {% elif column.type == 'date' %}
+              {{ row|getattr:column.field|date:"d M Y" }}
+              {% elif column.type == 'currency' %}
+              ₹{{ row|getattr:column.field|floatformat:2 }}
+              {% else %}
+              {{ row|getattr:column.field|default:"—" }}
+              {% endif %}
+            </td>
+            {% endfor %}
+            {% if actions %}
+            <td class="text-end">
+              {% for action in actions %}
+              <a href="{{ action.url|default:'#' }}" class="btn btn-sm btn-{{ action.type|default:'outline-primary' }}"
+                {% if action.confirm %}data-confirm-delete="{{ action.confirm }}" {% endif %}>
+                {% if action.icon %}<i class="bi {{ action.icon }}"></i>{% endif %}
+                {{ action.label }}
+              </a>
+              {% endfor %}
+            </td>
+            {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="{% if actions %}{{ columns|length|add:1 }}{% else %}{{ columns|length }}{% endif %}"
+              class="text-center text-muted-custom py-4">
+              <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+              <p class="mt-2 mb-0">No data available</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% if paginator %}
+  <div class="card-footer">
+    <nav aria-label="Table pagination">
+      <ul class="pagination justify-content-center mb-0">
+        {% if paginator.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ paginator.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for num in paginator.paginator.page_range %}
+        <li class="page-item {% if num == paginator.number %}active{% endif %}">
+          <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endfor %}
+        {% if paginator.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ paginator.next_page_number }}">Next</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+</div>

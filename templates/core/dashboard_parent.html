@@ -1,0 +1,44 @@
+{% extends "core/dashboard_base.html" %}
+{% load static %}
+
+{% block dashboard_title %}Parent Dashboard{% endblock %}
+
+{% block dashboard_sidebar %}
+  <a class="nav-link" href="#">
+    <i class="bi bi-people"></i> My Children
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-calendar-check"></i> Attendance
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-trophy"></i> Results
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-credit-card"></i> Fee Payments
+  </a>
+{% endblock %}
+
+{% block dashboard_content %}
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Children Enrolled' icon='bi-people' %}
+    </div>
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Pending Fees' icon='bi-currency-rupee' %}
+    </div>
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Notifications' icon='bi-bell' %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0"><i class="bi bi-people me-2"></i>My Children</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-muted-custom">Your children's information will appear here.</p>
+    </div>
+  </div>
+{% endblock %}
+
+

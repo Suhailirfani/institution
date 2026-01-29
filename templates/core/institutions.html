@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Institutions – Adabiyya Smart Connect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-4"><i class="bi bi-building me-2"></i>Our Institutions</h1>
+  <div class="row g-4">
+    {% for inst in institutions %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+              style="width: 40px; height: 40px; min-width: 40px;">
+              <i class="bi bi-building"></i>
+            </div>
+            <h5 class="card-title mb-0 text-primary">{{ inst.name }}</h5>
+          </div>
+          {% if inst.address %}
+          <p class="card-text text-muted small"><i class="bi bi-geo-alt me-1"></i>{{ inst.address }}</p>
+          {% endif %}
+          <div class="mt-4">
+            <span class="badge bg-light text-dark border">{{ inst.code }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+      <p class="text-muted">No institutions found.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

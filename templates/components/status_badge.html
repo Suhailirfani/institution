@@ -1,0 +1,28 @@
+{% comment %}
+Reusable Status Badge Component
+Usage: {% include 'components/status_badge.html' with status='approved' %}
+{% endcomment %}
+{% load custom_filters %}
+{% if status %}
+  {% if status|lower == 'approved' or status|lower == 'active' or status|lower == 'success' or status|lower == 'paid' %}
+    <span class="badge badge-success">
+      <i class="bi bi-check-circle me-1"></i>{{ status|title }}
+    </span>
+  {% elif status|lower == 'pending' or status|lower == 'under_review' or status|lower == 'processing' %}
+    <span class="badge badge-warning">
+      <i class="bi bi-clock me-1"></i>{{ status|title }}
+    </span>
+  {% elif status|lower == 'rejected' or status|lower == 'failed' or status|lower == 'cancelled' %}
+    <span class="badge badge-danger">
+      <i class="bi bi-x-circle me-1"></i>{{ status|title }}
+    </span>
+  {% elif status|lower == 'draft' or status|lower == 'inactive' %}
+    <span class="badge badge-info">
+      <i class="bi bi-file-earmark me-1"></i>{{ status|title }}
+    </span>
+  {% else %}
+    <span class="badge badge-primary">{{ status|title }}</span>
+  {% endif %}
+{% endif %}
+
+

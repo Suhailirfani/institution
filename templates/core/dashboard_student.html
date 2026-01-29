@@ -1,0 +1,44 @@
+{% extends "core/dashboard_base.html" %}
+{% load static %}
+
+{% block dashboard_title %}Student Dashboard{% endblock %}
+
+{% block dashboard_sidebar %}
+  <a class="nav-link" href="#">
+    <i class="bi bi-calendar-check"></i> Attendance
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-trophy"></i> Results
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-book"></i> Syllabus
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-credit-card"></i> Fee Payment
+  </a>
+{% endblock %}
+
+{% block dashboard_content %}
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Attendance %' icon='bi-calendar-check' %}
+    </div>
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Exams Completed' icon='bi-file-earmark-text' %}
+    </div>
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Pending Fees' icon='bi-currency-rupee' %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Academic Information</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-muted-custom">Your academic details will appear here.</p>
+    </div>
+  </div>
+{% endblock %}
+
+

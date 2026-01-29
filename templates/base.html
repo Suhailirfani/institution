@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Adabiyya Smart Connect - Educational & Charitable Society Management System">
+  <title>{% block title %}Adabiyya Smart Connect{% endblock %}</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <!-- Google Fonts - Inter & Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap"
+    rel="stylesheet">
+
+  {% load static %}
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'img/ADABIYYA_FAVICON.png' %}">
+
+  <!-- Custom CSS -->
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}?v=1.1">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'core:home' %}">
+        <img src="{% static 'img/ADABIYYA_LOGO.png' %}" alt="Logo" width="40" height="40"
+          class="d-inline-block align-text-top">
+        <span>Adabiyya Smart Connect</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+              href="{% url 'core:home' %}">
+              <i class="bi bi-house-door me-1"></i>Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+              href="{% url 'core:about' %}">
+              <i class="bi bi-info-circle me-1"></i>About Us
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'institutions' %}active{% endif %}"
+              href="{% url 'core:institutions' %}">
+              <i class="bi bi-building me-1"></i>Institutions
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'admissions_info' %}active{% endif %}"
+              href="{% url 'core:admissions_info' %}">
+              <i class="bi bi-file-earmark-text me-1"></i>Admissions
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'charity' %}active{% endif %}"
+              href="{% url 'core:charity' %}">
+              <i class="bi bi-heart me-1"></i>Charity Wing
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'career' %}active{% endif %}"
+              href="{% url 'core:career' %}">
+              <i class="bi bi-briefcase me-1"></i>Career
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+              href="{% url 'core:contact' %}">
+              <i class="bi bi-envelope me-1"></i>Contact
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>{{ user.get_full_name|default:user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li>
+                <a class="dropdown-item" href="{% url 'core:dashboard_router' %}">
+                  <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li>
+                <a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                  <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </a>
+              </li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:login' %}">
+              <i class="bi bi-box-arrow-in-right me-1"></i>Login
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" data-auto-dismiss="5000">
+        <i
+          class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}exclamation-triangle{% elif message.tags == 'warning' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-5 bg-light border-top py-5">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-md-6 text-center text-md-start">
+          <h5 class="fw-bold mb-3">Adabiyya Smart Connect</h5>
+          <p class="mb-1 text-muted-custom">
+            <i class="bi bi-geo-alt me-1"></i>Cherukara, Muthukurussi Road, Perinthalmanna, India, 679340
+          </p>
+          <p class="mb-1 text-muted-custom">
+            <i class="bi bi-telephone me-1"></i>99618 62603
+          </p>
+          <p class="mb-3 text-muted-custom">
+            <i class="bi bi-envelope me-1"></i>adabiyya4u@gmail.com
+          </p>
+          <p class="mb-0 text-muted-custom small">
+            <i class="bi bi-copyright me-1"></i>{% now "Y" %} Adabiyya Modern Academy
+          </p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <h5 class="fw-bold mb-3">Connect With Us</h5>
+          <div class="d-flex justify-content-center justify-content-md-end gap-3 mb-3">
+            <a href="https://www.facebook.com/share/p/1Bn9hTLym8/" target="_blank"
+              class="btn btn-outline-primary rounded-circle" title="Facebook">
+              <i class="bi bi-facebook"></i>
+            </a>
+            <a href="https://wa.me/919961862603" target="_blank" class="btn btn-outline-success rounded-circle"
+              title="WhatsApp">
+              <i class="bi bi-whatsapp"></i>
+            </a>
+            <!-- Add other social links here if needed -->
+          </div>
+          <p class="mb-0 text-muted-custom small">
+            <i class="bi bi-shield-check me-1"></i>Secure & Trusted Platform
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom JS -->
+  <script src="{% static 'js/main.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>

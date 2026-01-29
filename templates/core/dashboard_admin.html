@@ -1,0 +1,115 @@
+{% extends "core/dashboard_base.html" %}
+{% load static %}
+
+{% block dashboard_title %}Admin Dashboard{% endblock %}
+
+{% block dashboard_sidebar %}
+<a class="nav-link" href="{% url 'admin:index' %}">
+  <i class="bi bi-gear"></i> System Settings
+</a>
+<a class="nav-link" href="#">
+  <i class="bi bi-people"></i> Students
+</a>
+<a class="nav-link" href="#">
+  <i class="bi bi-person-badge"></i> Staff
+</a>
+<a class="nav-link" href="#">
+  <i class="bi bi-file-earmark-text"></i> Admissions
+</a>
+<a class="nav-link" href="{% url 'payments:payment_list' %}">
+  <i class="bi bi-credit-card"></i> Payments
+</a>
+<a class="nav-link" href="#">
+  <i class="bi bi-heart"></i> Sponsorships
+</a>
+<a class="nav-link" href="#">
+  <i class="bi bi-file-earmark-pdf"></i> Reports
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+<!-- KPI Cards Row -->
+<div class="row g-4 mb-4">
+  <div class="col-md-6 col-lg-3">
+    {% include 'components/kpi_card.html' with value=total_students label='Total Students' icon='bi-people' %}
+  </div>
+  <div class="col-md-6 col-lg-3">
+    {% include 'components/kpi_card.html' with value=total_staff label='Staff Members' icon='bi-person-badge' %}
+  </div>
+  <div class="col-md-6 col-lg-3">
+    {% include 'components/kpi_card.html' with value=pending_applications label='Pending Applications' icon='bi-file-earmark-text' %}
+  </div>
+  <div class="col-md-6 col-lg-3">
+    {% include 'components/kpi_card.html' with value=active_sponsorships label='Active Sponsorships' icon='bi-heart' %}
+  </div>
+</div>
+
+<!-- Revenue & Applications Row -->
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-currency-rupee me-2"></i>Revenue Overview</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted-custom">Total Revenue</span>
+          <h3 class="mb-0 text-primary">₹{{ total_revenue|floatformat:2|default:"0.00" }}</h3>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-muted-custom">Successful Payments</span>
+          <span class="badge badge-success">{{ total_payments }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-file-earmark-check me-2"></i>Admissions Status</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted-custom">Total Applications</span>
+          <h3 class="mb-0 text-primary">{{ total_applications }}</h3>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-muted-custom">Pending Review</span>
+          <span class="badge badge-warning">{{ pending_applications }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>Quick Actions</h5>
+  </div>
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <a href="{% url 'admissions:apply' %}" class="btn btn-outline-primary w-100">
+          <i class="bi bi-plus-circle me-2"></i>New Admission
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a href="{% url 'academics:staff_create' %}" class="btn btn-outline-primary w-100">
+          <i class="bi bi-person-plus me-2"></i>Add Staff
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a href="#" class="btn btn-outline-primary w-100">
+          <i class="bi bi-file-earmark-pdf me-2"></i>Generate Report
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary w-100">
+          <i class="bi bi-gear me-2"></i>Admin Panel
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

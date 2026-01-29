@@ -1,0 +1,36 @@
+{% comment %}
+Reusable Search & Filter Bar Component
+Usage: {% include 'components/search_filter.html' with search_placeholder='Search students...' %}
+{% endcomment %}
+<div class="search-filter-bar">
+  <div class="row g-3 align-items-end">
+    <div class="col-md-6">
+      <label for="searchInput" class="form-label">Search</label>
+      <input type="text" 
+             class="form-control" 
+             id="searchInput" 
+             {% if table_id %}data-table-search="{{ table_id }}"{% endif %}
+             placeholder="{{ search_placeholder|default:'Search...' }}">
+    </div>
+    {% if filter_fields %}
+      {% for field in filter_fields %}
+        <div class="col-md-3">
+          <label for="filter{{ forloop.counter }}" class="form-label">{{ field.label }}</label>
+          <select class="form-select" id="filter{{ forloop.counter }}">
+            <option value="">All {{ field.label }}</option>
+            {% for option in field.options %}
+              <option value="{{ option.value }}">{{ option.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endfor %}
+    {% endif %}
+    <div class="col-md-auto">
+      <button type="button" class="btn btn-outline-secondary w-100">
+        <i class="bi bi-funnel me-1"></i>Filter
+      </button>
+    </div>
+  </div>
+</div>
+
+

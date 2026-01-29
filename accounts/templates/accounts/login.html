@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login – Adabiyya Smart Connect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-custom">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Login
+          </h3>
+          <p class="mb-0 mt-2 small opacity-75">Access your dashboard</p>
+        </div>
+        <div class="card-body p-4">
+          {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              <strong>Login failed.</strong> Please check your username and password.
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endif %}
+
+          {% if next %}
+            {% if user.is_authenticated %}
+              <div class="alert alert-warning">
+                <i class="bi bi-shield-exclamation me-2"></i>
+                Your account doesn't have access to this page. To proceed, please login with an account that has access.
+              </div>
+            {% else %}
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Please login to access this page.
+              </div>
+            {% endif %}
+          {% endif %}
+
+          <form method="post" action="{% url 'accounts:login' %}" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <input type="hidden" name="next" value="{{ next|default:'/' }}">
+
+            <div class="mb-3">
+              <label for="id_username" class="form-label">
+                <i class="bi bi-person me-1"></i>Username
+                <span class="required-field"></span>
+              </label>
+              <input 
+                type="text" 
+                class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                id="id_username"
+                name="username"
+                value="{{ form.username.value|default:'' }}"
+                placeholder="Enter your username"
+                required
+                autofocus
+              >
+              {% if form.username.errors %}
+                <div class="invalid-feedback">
+                  {{ form.username.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="id_password" class="form-label">
+                <i class="bi bi-lock me-1"></i>Password
+                <span class="required-field"></span>
+              </label>
+              <input 
+                type="password" 
+                class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                id="id_password"
+                name="password"
+                placeholder="Enter your password"
+                required
+              >
+              {% if form.password.errors %}
+                <div class="invalid-feedback">
+                  {{ form.password.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me">
+              <label class="form-check-label" for="rememberMe">
+                Remember me
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 btn-lg mb-3">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+
+            <div class="text-center">
+              <small class="text-muted-custom">
+                <a href="#" class="text-decoration-none">Forgot password?</a>
+              </small>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer bg-light-custom text-center">
+          <small class="text-muted-custom">
+            Don't have an account? <a href="{% url 'core:admissions_info' %}" class="text-decoration-none">Contact us</a>
+          </small>
+        </div>
+      </div>
+
+      <!-- Additional Info Card -->
+      <div class="card mt-4 border-0 bg-light-custom">
+        <div class="card-body text-center py-3">
+          <p class="mb-2 small text-muted-custom">
+            <i class="bi bi-shield-check me-1"></i>
+            Secure login powered by Django
+          </p>
+          <p class="mb-0 small text-muted-custom">
+            <i class="bi bi-info-circle me-1"></i>
+            Need help? <a href="{% url 'core:contact' %}" class="text-decoration-none">Contact support</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Auto-focus username field if empty
+  document.addEventListener('DOMContentLoaded', function() {
+    const usernameField = document.getElementById('id_username');
+    if (usernameField && !usernameField.value) {
+      usernameField.focus();
+    }
+  });
+</script>
+{% endblock %}

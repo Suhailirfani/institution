@@ -1,0 +1,68 @@
+{% comment %}
+Reusable Form Card Component
+Usage: {% include 'components/form_card.html' with form_title='Add Student' %}
+{% endcomment %}
+{% load custom_filters %}
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">
+      {% if form_icon %}<i class="bi {{ form_icon }} me-2"></i>{% endif %}
+      {{ form_title|default:"Form" }}
+    </h5>
+  </div>
+  <div class="card-body">
+    <form method="post" {% if form_enctype %}enctype="{{ form_enctype }}" {% endif %} class="needs-validation"
+      novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+
+      {% for field in form %}
+      <div class="mb-3">
+        <label for="{{ field.id_for_label }}" class="form-label">
+          {{ field.label }}
+          {% if field.field.required %}<span class="required-field"></span>{% endif %}
+        </label>
+
+        {% if field.field.widget.input_type == 'select' %}
+        {{ field|add_class:"form-select" }}
+        {% elif field.field.widget.input_type == 'textarea' %}
+        {{ field|add_class:"form-control"|attr:"rows:3" }}
+        {% elif field.field.widget.input_type == 'checkbox' %}
+        <div class="form-check">
+          {{ field|add_class:"form-check-input" }}
+          <label class="form-check-label" for="{{ field.id_for_label }}">
+            {{ field.label }}
+          </label>
+        </div>
+        {% else %}
+        {{ field|add_class:"form-control" }}
+        {% endif %}
+
+        {% if field.help_text %}
+        <div class="form-text">{{ field.help_text }}</div>
+        {% endif %}
+
+        {% if field.errors %}
+        <div class="invalid-feedback d-block">
+          {{ field.errors }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="d-flex justify-content-between">
+        <a href="{{ cancel_url|default:'#' }}" class="btn btn-outline-secondary">
+          <i class="bi bi-x-circle me-1"></i>Cancel
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-check-circle me-1"></i>{{ submit_text|default:"Submit" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

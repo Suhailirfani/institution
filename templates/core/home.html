@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home – Adabiyya Smart Connect{% endblock %}
+
+{% block content %}
+<!-- News Ticker -->
+{% if news_items %}
+<div class="bg-dark text-white py-2 overflow-hidden">
+  <div class="container d-flex align-items-center">
+    <span class="badge bg-danger me-3 rounded-0 text-uppercase">Latest News</span>
+    <div class="flex-grow-1 overflow-hidden">
+      <marquee onmouseover="this.stop();" onmouseout="this.start();" scrollamount="5">
+        {% for news in news_items %}
+        <span class="me-5"><i class="bi bi-megaphone-fill me-2 text-warning"></i>{{ news.title }}</span>
+        {% endfor %}
+      </marquee>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Hero Slider -->
+<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+  <div class="carousel-inner">
+    <div class="carousel-item active hero-carousel-item"
+      style="background-image: url('{% static 'img/education_banner.png' %}?v=2'); min-height: 500px;">
+      <div class="hero-overlay"></div>
+      <div class="carousel-caption d-block top-50 translate-middle-y text-start ps-4 ps-md-5">
+        <div class="hero-content-box animate-fade-up">
+          <h1 class="display-3 fw-bold text-warning mb-3">Empowering Education</h1>
+          <p class="lead text-white mb-4 fs-4">Fostering excellence in academic and moral values for a brighter future.
+          </p>
+          <div class="d-flex gap-3 hero-btn-group">
+            <a href="{% url 'core:admissions_info' %}" class="btn btn-warning btn-lg fw-bold px-4 rounded-pill">Apply
+              Now</a>
+            <a href="{% url 'core:about' %}" class="btn btn-outline-light btn-lg fw-bold px-4 rounded-pill">Learn
+              More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item hero-carousel-item"
+      style="background-image: url('{% static 'img/community_vision.png' %}?v=2'); min-height: 500px;">
+      <div class="hero-overlay"></div>
+      <div class="carousel-caption d-block top-50 translate-middle-y text-start ps-4 ps-md-5">
+        <div class="hero-content-box animate-fade-up">
+          <h1 class="display-3 fw-bold text-warning mb-3">Support Our Vision</h1>
+          <p class="lead text-white mb-4 fs-4">Join hands with us to support deserving students through education and
+            charity.</p>
+          <div class="d-flex gap-3 hero-btn-group">
+            <a href="{% url 'core:charity' %}" class="btn btn-warning btn-lg fw-bold px-4 rounded-pill">Donate Today</a>
+            <a href="{% url 'core:institutions' %}" class="btn btn-outline-light btn-lg fw-bold px-4 rounded-pill">Our
+              Institutions</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item hero-carousel-item"
+      style="background-image: url('{% static 'img/campus_infrastructure.png' %}?v=2'); min-height: 500px;">
+      <div class="hero-overlay"></div>
+      <div class="carousel-caption d-block top-50 translate-middle-y text-start ps-4 ps-md-5">
+        <div class="hero-content-box animate-fade-up">
+          <h1 class="display-3 fw-bold text-white mb-3">State-of-the-Art Infrastructure</h1>
+          
+          <div class="d-flex gap-3 hero-btn-group">
+            <a href="{% url 'core:institutions' %}" class="btn btn-warning btn-lg fw-bold px-4 rounded-pill">Explore
+              Campus</a>
+            <a href="{% url 'core:contact' %}" class="btn btn-outline-light btn-lg fw-bold px-4 rounded-pill">Visit
+              Us</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<!-- Welcome Section -->
+<div class="container py-5">
+  <div class="row align-items-center">
+    <div class="col-lg-6">
+      <h2 class="fw-bold mb-4">Adabiyya Modern Academy</h2>
+      <p class="lead text-muted btn-custom-text mb-4">
+        Educational & Charitable Society – Kerala
+      </p>
+      <p class="mb-4">
+        Centralized ERP and communication platform connecting students, parents, staff, sponsors, and committee members.
+        Building trust through transparency and excellence in education.
+      </p>
+      <div class="d-flex gap-3">
+        <a href="{% url 'core:institutions' %}" class="btn btn-primary btn-lg">
+          <i class="bi bi-building me-2"></i>Our Institutions
+        </a>
+      </div>
+    </div>
+    <div class="col-lg-6 text-center">
+      <div class="card shadow-custom border-0">
+        <div class="card-body p-5">
+          <i class="bi bi-mortarboard-fill" style="font-size: 5rem; color: var(--primary);"></i>
+          <h3 class="mt-4 mb-3">Welcome to Adabiyya</h3>
+          <p class="text-muted">Your trusted partner in education and community service.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Section -->
+<div class="bg-light-custom py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">Our Services</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 text-center">
+          <div class="card-body">
+            <i class="bi bi-book" style="font-size: 3rem; color: var(--primary);"></i>
+            <h5 class="mt-3 mb-2">Quality Education</h5>
+            <p class="text-muted-custom">Comprehensive academic programs designed for excellence.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 text-center">
+          <div class="card-body">
+            <i class="bi bi-heart" style="font-size: 3rem; color: var(--accent);"></i>
+            <h5 class="mt-3 mb-2">Charity & Sponsorship</h5>
+            <p class="text-muted-custom">Supporting deserving students through our sponsorship program.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 text-center">
+          <div class="card-body">
+            <i class="bi bi-shield-check" style="font-size: 3rem; color: var(--primary);"></i>
+            <h5 class="mt-3 mb-2">Transparent Governance</h5>
+            <p class="text-muted-custom">Committee-driven transparency and accountability.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Links Section -->
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="bi bi-link-45deg me-2"></i>Quick Links</h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <a href="{% url 'core:admissions_info' %}" class="btn btn-outline-primary w-100">
+                <i class="bi bi-file-earmark-text me-2"></i>Admissions
+              </a>
+            </div>
+            <div class="col-md-6">
+              <a href="{% url 'core:charity' %}" class="btn btn-outline-success w-100">
+                <i class="bi bi-heart me-2"></i>Charity & Sponsorship
+              </a>
+            </div>
+            <div class="col-md-6">
+              <a href="{% url 'core:institutions' %}" class="btn btn-outline-primary w-100">
+                <i class="bi bi-building me-2"></i>Our Institutions
+              </a>
+            </div>
+            <div class="col-md-6">
+              <a href="{% url 'core:contact' %}" class="btn btn-outline-secondary w-100">
+                <i class="bi bi-envelope me-2"></i>Contact Us
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

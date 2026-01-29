@@ -1,0 +1,25 @@
+{% comment %}
+Reusable KPI Card Component
+Usage: {% include 'components/kpi_card.html' with value=1234 label='Total Students' icon='bi-people' color='primary' %}
+{% endcomment %}
+<div class="card kpi-card">
+  <div class="card-body">
+    {% if icon %}
+      <div class="kpi-icon">
+        <i class="bi {{ icon }}"></i>
+      </div>
+    {% endif %}
+    <div class="kpi-value">{{ value|default:"0" }}</div>
+    <div class="kpi-label">{{ label|default:"Metric" }}</div>
+    {% if change %}
+      <div class="mt-2">
+        <small class="text-{{ change_type|default:'success' }}">
+          <i class="bi bi-arrow-{{ change_direction|default:'up' }}-{{ change_direction|default:'right' }}"></i>
+          {{ change }}%
+        </small>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+

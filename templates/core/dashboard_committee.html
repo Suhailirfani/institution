@@ -1,0 +1,44 @@
+{% extends "core/dashboard_base.html" %}
+{% load static %}
+
+{% block dashboard_title %}Committee Dashboard{% endblock %}
+
+{% block dashboard_sidebar %}
+  <a class="nav-link" href="#">
+    <i class="bi bi-file-earmark-pdf"></i> Finance Reports
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-clipboard-check"></i> Project Status
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-file-text"></i> Meeting Minutes
+  </a>
+  <a class="nav-link" href="#">
+    <i class="bi bi-graph-up"></i> Analytics
+  </a>
+{% endblock %}
+
+{% block dashboard_content %}
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Finance Reports' icon='bi-file-earmark-pdf' %}
+    </div>
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Active Projects' icon='bi-clipboard-check' %}
+    </div>
+    <div class="col-md-4">
+      {% include 'components/kpi_card.html' with value='0' label='Meeting Minutes' icon='bi-file-text' %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Transparency & Governance</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-muted-custom">Committee reports and documents will appear here.</p>
+    </div>
+  </div>
+{% endblock %}
+
+

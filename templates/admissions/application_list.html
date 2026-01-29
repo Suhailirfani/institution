@@ -1,0 +1,53 @@
+{% extends 'core/dashboard_base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 mb-0">Admission Applications</h2>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Applicant</th>
+                            <th>Programme</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold">{{ app.full_name }}</div>
+                                <div class="small text-muted">{{ app.email }}</div>
+                            </td>
+                            <td>{{ app.programme }}</td>
+                            <td>
+                                {% include 'components/status_badge.html' with status=app.status %}
+                            </td>
+                            <td>{{ app.submitted_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="{% url 'admissions:application_detail' app.pk %}"
+                                    class="btn btn-sm btn-outline-primary">
+                                    Review
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">No applications found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

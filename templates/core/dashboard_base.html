@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% block dashboard_title_meta %}Dashboard{% endblock %} – Adabiyya Smart Connect{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <h1>{% block dashboard_title %}Dashboard{% endblock %}</h1>
+    <p class="subtitle">
+      Welcome back, <strong>{{ user.get_full_name|default:user.username }}</strong>
+      <span class="badge badge-primary ms-2">{{ user.get_role_display }}</span>
+    </p>
+  </div>
+
+  <!-- Dashboard Layout -->
+  <div class="row">
+    <!-- Sidebar Navigation -->
+    <div class="col-lg-3 mb-4">
+      <div class="dashboard-sidebar">
+        <nav class="nav flex-column">
+          <a class="nav-link active" href="{% url 'core:dashboard_router' %}">
+            <i class="bi bi-speedometer2"></i> Overview
+          </a>
+          {% block dashboard_sidebar %}{% endblock %}
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="col-lg-9">
+      <div class="dashboard-content">
+        {% block dashboard_content %}
+        <p>Welcome to your dashboard.</p>
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
