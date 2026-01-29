@@ -5,21 +5,123 @@
 
 {% block content %}
 <div class="container py-5">
-  <div class="row">
-    <div class="col-lg-8 mx-auto">
-      <div class="card">
-        <div class="card-header bg-primary text-white">
-          <h2 class="mb-0"><i class="bi bi-info-circle me-2"></i>About Us</h2>
+  <!-- Header Section -->
+  <div class="text-center mb-5">
+    <h1 class="display-4 fw-bold text-primary mb-3">ADABIYYA MODERN ACADEMY (AMAECT)</h1>
+    <p class="lead text-muted fst-italic">"Empowering Minds, Enriching Souls, Serving Humanity."</p>
+    <hr class="w-25 mx-auto text-primary" style="height: 3px; opacity: 1;">
+  </div>
+
+  <div class="row g-5">
+    <!-- Introduction -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100 border-0">
+        <div class="card-body p-4">
+          <h3 class="card-title text-warning mb-4"><i class="bi bi-building me-2"></i>Our Story</h3>
+          <p class="card-text">
+            Established on <strong>January 29, 2026</strong>, in Elad, Malappuram, the <strong>Adabiyya Modern Academy
+              Educational Charitable Trust (AMAECT)</strong> is a global visionary movement dedicated to blending
+            profound spiritual wisdom with cutting-edge modern education.
+          </p>
+          <p class="card-text">
+            Under the visionary leadership of our Chairman, <strong>ABOOBACKER Shamil Irfani Elad</strong>, the Trust
+            operates with a highly structured and transparent administrative framework. Our activities are managed by
+            dedicated departments—including Higher Education, Shari’ah Studies, and Technology—ensuring professional
+            excellence in every endeavor.
+          </p>
         </div>
+      </div>
+    </div>
+
+    <!-- Vision -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100 border-0 bg-primary text-white">
+        <div class="card-body p-4">
+          <h3 class="card-title text-white mb-4"><i class="bi bi-eye me-2"></i>Our Vision</h3>
+          <p class="card-text fs-5">
+            To be a premier global center of excellence that nurtures a generation of intellectually competent and
+            ethically grounded individuals. Rooted in the noble ideology of <strong>Ahlu Sunnah Wal Jama'ah</strong>, we
+            strive to bridge the gap between sacred tradition and modern innovation.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mission & Objectives -->
+  <div class="row mt-5">
+    <div class="col-12 text-center mb-4">
+      <h2 class="fw-bold">Our Mission & Objectives</h2>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card h-100 shadow-sm border-start border-4 border-warning">
         <div class="card-body">
-          <h4 class="mb-3">Adabiyya Modern Academy Educational & Charitable Society</h4>
-          <p class="lead">Building excellence in education and community service in Kerala.</p>
-          <p>Our mission is to provide quality education and support to deserving students through transparent governance and community involvement.</p>
+          <div class="mb-3 text-warning">
+            <i class="bi bi-book-half fs-1"></i>
+          </div>
+          <h5 class="card-title fw-bold">Integrated Education</h5>
+          <p class="card-text small">Establishing world-class institutions ranging from Dawa and Hifz colleges to Law,
+            Arts, and Science academies.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card h-100 shadow-sm border-start border-4 border-info">
+        <div class="card-body">
+          <div class="mb-3 text-info">
+            <i class="bi bi-laptop fs-1"></i>
+          </div>
+          <h5 class="card-title fw-bold">Digital Transformation</h5>
+          <p class="card-text small">Leveraging modern technology to provide accessible online educational platforms for
+            learners worldwide.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card h-100 shadow-sm border-start border-4 border-success">
+        <div class="card-body">
+          <div class="mb-3 text-success">
+            <i class="bi bi-heart-pulse fs-1"></i>
+          </div>
+          <h5 class="card-title fw-bold">Social Welfare</h5>
+          <p class="card-text small">Uplifting the underprivileged through interest-free loans, medical aid, marriage
+            assistance, and rural community adoption.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card h-100 shadow-sm border-start border-4 border-danger">
+        <div class="card-body">
+          <div class="mb-3 text-danger">
+            <i class="bi bi-flag fs-1"></i>
+          </div>
+          <h5 class="card-title fw-bold">National Integrity</h5>
+          <p class="card-text small">Upholding the values of the Indian Constitution and fostering a spirit of
+            patriotism and social harmony.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why Adabiyya -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card bg-light border-0 shadow-sm">
+        <div class="card-body p-5 text-center">
+          <h2 class="mb-4">Why Adabiyya?</h2>
+          <p class="lead mb-4">
+            At AMAECT, we don’t just teach; we transform. We believe that true education is a tool for social change and
+            personal spiritual growth.
+          </p>
+          <a href="{% url 'core:admissions_info' %}" class="btn btn-primary btn-lg rounded-pill px-5">Join our
+            Journey</a>
         </div>
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
-
-
