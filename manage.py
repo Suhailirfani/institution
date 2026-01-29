@@ -4,8 +4,16 @@ import os
 import sys
 
 
+
 def main():
     """Run administrative tasks."""
+    # Load .env file
+    try:
+        from dotenv import read_dotenv
+        read_dotenv()
+    except ImportError:
+        pass
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'adabiyya_smart_connect.settings')
     try:
         from django.core.management import execute_from_command_line
