@@ -74,7 +74,7 @@ class DashboardRouterView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         user: User = self.request.user
         if not user.is_authenticated:
-            return reverse_lazy("login")
+            return reverse_lazy("accounts:login")
 
         if user.is_admin():
             return reverse_lazy("core:admin_dashboard")
