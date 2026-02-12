@@ -1,0 +1,45 @@
+{% extends "core/dashboard_base.html" %}
+{% load static %}
+
+{% block dashboard_title %}Update History{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">System Updates</h1>
+    <a href="{% url 'core:update_history' %}" class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+    </a>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error }}
+</div>
+{% endif %}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Recent Updates (Git Log)</h6>
+    </div>
+    <div class="card-body">
+        {% if commits %}
+        <div class="timeline">
+            {% for commit in commits %}
+            <div class="timeline-item pb-4 border-start border-l-2 ps-4 position-relative">
+                <div class="position-absolute top-0 start-0 translate-middle rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 1.5rem; height: 1.5rem; margin-left: -1px;">
+                    <i class="bi bi-check"></i>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h5 class="h6 fw-bold mb-0 text-dark">{{ commit.message }}</h5>
+                    <small class="text-muted">{{ commit.date }}</small>
+                </div>
+                <!-- <p class="mb-1 text-muted small">Updated by {{ commit.author }}</p> -->
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center text-muted my-5">No recent updates found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -14,11 +14,20 @@ urlpatterns = [
     
     # Students
     path("students/", views.StudentListView.as_view(), name="student_list"),
+    path("students/add/", views.StudentCreateView.as_view(), name="student_create"),
+    path("students/import/", views.StudentBulkImportView.as_view(), name="student_import"),
+    path("students/import/template/", views.DownloadStudentImportTemplateView.as_view(), name="student_import_template"),
     path("students/<int:pk>/", views.StudentDetailView.as_view(), name="student_detail"),
+    path("students/<int:pk>/edit/", views.StudentUpdateView.as_view(), name="student_update"),
+    path("students/<int:pk>/certificate/", views.StudentCertificateView.as_view(), name="student_certificate"),
+    path("my-profile/", views.StudentSelfDetailView.as_view(), name="student_self_detail"),
     
     # Staff
     path("staff/", views.StaffListView.as_view(), name="staff_list"),
     path("staff/add/", views.StaffCreateView.as_view(), name="staff_create"),
+    path("staff/import/", views.StaffBulkImportView.as_view(), name="staff_import"),
+    path("staff/import/template/", views.DownloadStaffImportTemplateView.as_view(), name="staff_import_template"),
+    path("staff/<int:pk>/edit/", views.StaffUpdateView.as_view(), name="staff_update"),
 
     # Attendance
     path("attendance/add/", views.AttendanceCreateView.as_view(), name="attendance_create"),

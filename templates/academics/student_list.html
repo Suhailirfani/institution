@@ -5,6 +5,16 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="h4 mb-0">Students</h2>
+        {% if user.is_staff or user.is_superuser %} <!-- Checking permissions broadly for now -->
+        <div>
+            <a href="{% url 'academics:student_import' %}" class="btn btn-outline-primary me-2">
+                <i class="bi bi-file-earmark-spreadsheet"></i> Import Excel
+            </a>
+            <a href="{% url 'academics:student_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Add New Student
+            </a>
+        </div>
+        {% endif %}
     </div>
 
     <div class="card border-0 shadow-sm">
@@ -26,10 +36,26 @@
                             <td>{{ student.user.get_full_name }}</td>
                             <td>{{ student.classroom }}</td>
                             <td>
+                                {% if student.whatsapp_number %}
+                                <a href="https://wa.me/{{ student.whatsapp_number }}" target="_blank"
+                                    class="btn btn-sm btn-outline-success" title="Message on WhatsApp">
+                                    <i class="bi bi-whatsapp"></i>
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'academics:student_certificate' student.pk %}" target="_blank"
+                                    class="btn btn-sm btn-outline-dark" title="Print Certificate">
+                                    <i class="bi bi-printer"></i>
+                                </a>
                                 <a href="{% url 'academics:student_detail' student.pk %}"
                                     class="btn btn-sm btn-outline-primary">
-                                    View
+                                    <i class="bi bi-info-circle me-1"></i>More Details
                                 </a>
+                                {% if user.is_staff or user.is_superuser %}
+                                <a href="{% url 'academics:student_update' student.pk %}"
+                                    class="btn btn-sm btn-outline-secondary">
+                                    Edit
+                                </a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% empty %}

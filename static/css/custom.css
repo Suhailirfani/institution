@@ -45,6 +45,9 @@
   /* Typography */
   --font-heading: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-malayalam-heading: 'Baloo Chettan 2', 'Noto Sans Malayalam', sans-serif;
+  --font-malayalam-body: 'Manjari', 'Noto Sans Malayalam', sans-serif;
+
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -75,6 +78,14 @@ h6 {
   color: var(--text-primary);
   line-height: 1.3;
   margin-bottom: var(--spacing-md);
+}
+
+.font-malayalam-heading {
+  font-family: 'Baloo Chettan 2', 'Noto Sans Malayalam', sans-serif !important;
+}
+
+.font-malayalam-body {
+  font-family: 'Manjari', 'Noto Sans Malayalam', sans-serif !important;
 }
 
 h1 {

@@ -16,9 +16,10 @@ class StudentProfileForm(forms.ModelForm):
 
     class Meta:
         model = StudentProfile
-        fields = ['admission_number', 'date_of_birth', 'classroom']
+        fields = ['admission_number', 'whatsapp_number', 'date_of_birth', 'classroom', 'father_name', 'mother_name', 'address', 'blood_group']
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'rows': 3}),
         }
 
     def save(self, commit=True):
@@ -39,9 +40,12 @@ class StaffCreationForm(forms.ModelForm):
     
     class Meta:
         model = StaffProfile
-        fields = ['department', 'designation', 'joining_date', 'qualification']
+        fields = ['mobile_number', 'place', 'address', 'department', 'designation', 'joining_date', 'qualification']
         widgets = {
             'joining_date': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'rows': 2}),
+            'mobile_number': forms.TextInput(attrs={'placeholder': 'Contact Number'}),
+            'place': forms.TextInput(attrs={'placeholder': 'City/Town'}),
         }
 
     def save(self, commit=True):
@@ -53,6 +57,7 @@ class StaffCreationForm(forms.ModelForm):
 
         with transaction.atomic():
             user = User.objects.create_user(
+                username=self.cleaned_data['email'],
                 email=self.cleaned_data['email'],
                 password=self.cleaned_data['password'],
                 first_name=self.cleaned_data['first_name'],
@@ -62,6 +67,134 @@ class StaffCreationForm(forms.ModelForm):
             
             staff_profile = super().save(commit=False)
             staff_profile.user = user
+
+            # Assign to default institution (first active one)
+            from core.models import Institution
+            staff_profile.institution = Institution.objects.filter(is_active=True).first() or Institution.objects.first()
+
             staff_profile.save()
             
+            
         return staff_profile
+
+
+class StaffUpdateForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    email = forms.EmailField(required=True)
+    
+    class Meta:
+        model = StaffProfile
+        fields = ['mobile_number', 'place', 'address', 'department', 'designation', 'joining_date', 'qualification']
+        widgets = {
+            'joining_date': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'rows': 2}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.user:
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+            self.fields['email'].initial = self.instance.user.email
+
+    def save(self, commit=True):
+        staff_profile = super().save(commit=False)
+        
+        user = staff_profile.user
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data['email']
+        user.save()
+
+        if commit:
+            staff_profile.save()
+        return staff_profile
+
+
+class StaffBulkImportForm(forms.Form):
+    excel_file = forms.FileField(
+        label="Upload Excel File",
+        help_text="Upload .xlsx file with columns: First Name, Last Name, Email, Mobile, Place, Department, Designation, Qualification"
+    )
+
+
+class StudentCreationForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    email = forms.EmailField(required=True)
+    password = forms.CharField(widget=forms.PasswordInput, required=True)
+    
+    class Meta:
+        model = StudentProfile
+        fields = ['admission_number', 'whatsapp_number', 'date_of_birth', 'classroom', 'father_name', 'mother_name', 'address', 'blood_group']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'rows': 3}),
+            'whatsapp_number': forms.TextInput(attrs={'placeholder': 'e.g. 9876543210'}),
+        }
+
+    def save(self, commit=True):
+        from django.db import transaction
+        
+        if not commit:
+            raise NotImplementedError("StudentCreationForm does not support save(commit=False)")
+
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=self.cleaned_data['email'], # Use email as username default
+                email=self.cleaned_data['email'],
+                password=self.cleaned_data['password'],
+                first_name=self.cleaned_data['first_name'],
+                last_name=self.cleaned_data['last_name'],
+                role=User.Roles.STUDENT
+            )
+            
+            student_profile = super().save(commit=False)
+            student_profile.user = user
+            student_profile.save()
+            
+        return student_profile
+
+
+class StudentUpdateForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    email = forms.EmailField(required=True)
+    
+    class Meta:
+        model = StudentProfile
+        fields = ['admission_number', 'whatsapp_number', 'date_of_birth', 'classroom', 'father_name', 'mother_name', 'address', 'blood_group']
+        widgets = {
+            'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'rows': 3}),
+            'whatsapp_number': forms.TextInput(attrs={'placeholder': 'e.g. 9876543210'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.user:
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+            self.fields['email'].initial = self.instance.user.email
+
+    def save(self, commit=True):
+        student_profile = super().save(commit=False)
+        
+        user = student_profile.user
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data['email']
+        user.save()
+
+        if commit:
+            student_profile.save()
+        return student_profile
+
+
+class StudentBulkImportForm(forms.Form):
+    excel_file = forms.FileField(
+        label="Upload Excel File",
+        help_text="Upload .xlsx file with columns: First Name, Last Name, Email, DOB, Admin No, WhatsApp, Class Code, Father Name, Mother Name, Address, Blood Group"
+    )
+

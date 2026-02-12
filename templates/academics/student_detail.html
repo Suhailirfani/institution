@@ -25,8 +25,11 @@
         </div>
         <div class="col-md-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Academic Profile</h5>
+                    <a href="{% url 'academics:student_certificate' student.pk %}" target="_blank" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-printer me-1"></i> Print Certificate
+                    </a>
                 </div>
                 <div class="card-body">
                     <dl class="row">
@@ -38,6 +41,34 @@
 
                         <dt class="col-sm-3">Email</dt>
                         <dd class="col-sm-9">{{ student.user.email }}</dd>
+
+                        <dt class="col-sm-3">WhatsApp</dt>
+                        <dd class="col-sm-9">
+                            {% if student.whatsapp_number %}
+                            {{ student.whatsapp_number }}
+                            <a href="https://wa.me/{{ student.whatsapp_number }}" target="_blank"
+                                class="ms-2 text-decoration-none">
+                                <i class="bi bi-whatsapp text-success"></i>
+                            </a>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </dd>
+                    </dl>
+
+                    <h5 class="mt-4 mb-3 border-bottom pb-2">Personal Details</h5>
+                    <dl class="row">
+                        <dt class="col-sm-3">Father's Name</dt>
+                        <dd class="col-sm-9">{{ student.father_name|default:"-" }}</dd>
+
+                        <dt class="col-sm-3">Mother's Name</dt>
+                        <dd class="col-sm-9">{{ student.mother_name|default:"-" }}</dd>
+
+                        <dt class="col-sm-3">Blood Group</dt>
+                        <dd class="col-sm-9">{{ student.blood_group|default:"-" }}</dd>
+
+                        <dt class="col-sm-3">Address</dt>
+                        <dd class="col-sm-9">{{ student.address|linebreaksbr|default:"-" }}</dd>
                     </dl>
                 </div>
             </div>

@@ -17,6 +17,7 @@ class User(AbstractUser):
         PARENT = "PARENT", _("Parent")
         SPONSOR = "SPONSOR", _("Sponsor")
         COMMITTEE = "COMMITTEE", _("Committee Member")
+        APPLICANT = "APPLICANT", _("Applicant")
 
     role = models.CharField(
         _("role"),
@@ -51,6 +52,9 @@ class User(AbstractUser):
 
     def is_committee_member(self) -> bool:
         return self.role == self.Roles.COMMITTEE
+
+    def is_applicant(self) -> bool:
+        return self.role == self.Roles.APPLICANT
 
     def __str__(self) -> str:
         return f"{self.username} ({self.get_role_display()})"

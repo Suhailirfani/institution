@@ -1,0 +1,51 @@
+{% extends 'core/dashboard_base.html' %}
+{% load widget_tweaks %}
+
+{% block dashboard_content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 mb-0">Import Staff</h2>
+        <a href="{% url 'academics:staff_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4">Upload Excel File</h5>
+                    
+                    <div class="alert alert-info mb-4">
+                        <h6 class="alert-heading"><i class="bi bi-info-circle me-2"></i>Instructions</h6>
+                        <ol class="mb-0 ps-3">
+                            <li class="mb-1">Download the <strong><a href="{% url 'academics:staff_import_template' %}" class="alert-link">Excel Template</a></strong></li>
+                            <li class="mb-1">Fill in the staff details (First Name, Last Name, Email, Mobile, Place, etc.)</li>
+                            <li class="mb-1">Required fields: Name, Email, Mobile, Place</li>
+                            <li class="mb-0">Save and upload the file below</li>
+                        </ol>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.excel_file.id_for_label }}" class="form-label">Select Excel File (*.xlsx)</label>
+                            {% render_field form.excel_file class="form-control" accept=".xlsx" %}
+                            {% if form.excel_file.errors %}
+                                <div class="text-danger small mt-1">{{ form.excel_file.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-upload me-2"></i>Upload and Import
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

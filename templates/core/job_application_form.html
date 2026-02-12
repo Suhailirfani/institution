@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Apply for {{ job.title }} – Adabiyya Smart Connect{% endblock %}
+
+{% block content %}
+<div class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h1 class="fw-bold">Job Application</h1>
+        <p class="lead mb-0">{{ job.title }}</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.full_name.id_for_label }}" class="form-label">Full Name</label>
+                            {% render_field form.full_name class="form-control" %}
+                            {% if form.full_name.errors %}
+                            <div class="text-danger small">{{ form.full_name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                                {% render_field form.email class="form-control" type="email" %}
+                                {% if form.email.errors %}
+                                <div class="text-danger small">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number</label>
+                                {% render_field form.phone class="form-control" %}
+                                {% if form.phone.errors %}
+                                <div class="text-danger small">{{ form.phone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.resume.id_for_label }}" class="form-label">Resume / CV (PDF, DOC)</label>
+                            {% render_field form.resume class="form-control" %}
+                            {% if form.resume.errors %}
+                            <div class="text-danger small">{{ form.resume.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.cover_letter.id_for_label }}" class="form-label">Cover Letter (Optional)</label>
+                            {% render_field form.cover_letter class="form-control" %}
+                            {% if form.cover_letter.errors %}
+                            <div class="text-danger small">{{ form.cover_letter.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
+                            <a href="{% url 'core:career' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

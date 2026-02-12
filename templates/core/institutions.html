@@ -16,13 +16,16 @@
               style="width: 40px; height: 40px; min-width: 40px;">
               <i class="bi bi-building"></i>
             </div>
-            <h5 class="card-title mb-0 text-primary">{{ inst.name }}</h5>
+            <a href="{% url 'core:institution_detail' inst.pk %}" class="text-decoration-none">
+                <h5 class="card-title mb-0 text-primary font-malayalam-heading" style="font-size: 1.3rem;">{{ inst.name }}</h5>
+            </a>
           </div>
           {% if inst.address %}
-          <p class="card-text text-muted small"><i class="bi bi-geo-alt me-1"></i>{{ inst.address }}</p>
+          <p class="card-text text-muted small font-malayalam-body" style="font-size: 0.95rem;"><i class="bi bi-geo-alt me-1"></i>{{ inst.address }}</p>
           {% endif %}
-          <div class="mt-4">
+          <div class="mt-4 d-flex justify-content-between align-items-center">
             <span class="badge bg-light text-dark border">{{ inst.code }}</span>
+            <a href="{% url 'core:institution_detail' inst.pk %}" class="btn btn-sm btn-outline-primary">Read More</a>
           </div>
         </div>
       </div>
@@ -33,5 +36,8 @@
     </div>
     {% endfor %}
   </div>
+
+  <!-- Malayalam Departments List -->
+
 </div>
 {% endblock %}

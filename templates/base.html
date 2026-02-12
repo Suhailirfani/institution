@@ -16,8 +16,7 @@
   <!-- Google Fonts - Inter & Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@400;500;600;700;800&family=Manjari:wght@100;400;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&family=Noto+Sans+Malayalam:wght@400;600;700&display=swap"
     rel="stylesheet">
 
   {% load static %}
@@ -26,7 +25,7 @@
 
   <!-- Custom CSS -->
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/custom.css' %}?v=1.1">
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}?v=1.2">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -106,7 +105,11 @@
                 <hr class="dropdown-divider">
               </li>
               <li>
-                <a class="dropdown-item" href="{% url 'accounts:logout' %}">
+                <form id="logout-form" action="{% url 'accounts:logout' %}" method="post" style="display: none;">
+                  {% csrf_token %}
+                </form>
+                <a class="dropdown-item" href="#"
+                  onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                   <i class="bi bi-box-arrow-right me-2"></i>Logout
                 </a>
               </li>

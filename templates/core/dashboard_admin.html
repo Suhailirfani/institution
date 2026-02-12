@@ -7,13 +7,22 @@
 <a class="nav-link" href="{% url 'admin:index' %}">
   <i class="bi bi-gear"></i> System Settings
 </a>
-<a class="nav-link" href="#">
+<a class="nav-link" href="{% url 'core:academicyear_list' %}">
+  <i class="bi bi-calendar-range"></i> Academic Years
+</a>
+<a class="nav-link" href="{% url 'core:institution_manage' %}">
+  <i class="bi bi-building"></i> Institutions
+</a>
+<a class="nav-link" href="{% url 'academics:classroom_list' %}">
+  <i class="bi bi-book"></i> Classes
+</a>
+<a class="nav-link" href="{% url 'academics:student_list' %}">
   <i class="bi bi-people"></i> Students
 </a>
-<a class="nav-link" href="#">
+<a class="nav-link" href="{% url 'academics:staff_list' %}">
   <i class="bi bi-person-badge"></i> Staff
 </a>
-<a class="nav-link" href="#">
+<a class="nav-link" href="{% url 'admissions:application_list' %}">
   <i class="bi bi-file-earmark-text"></i> Admissions
 </a>
 <a class="nav-link" href="{% url 'payments:payment_list' %}">
@@ -22,8 +31,11 @@
 <a class="nav-link" href="#">
   <i class="bi bi-heart"></i> Sponsorships
 </a>
-<a class="nav-link" href="#">
-  <i class="bi bi-file-earmark-pdf"></i> Reports
+<a class="nav-link" href="{% url 'core:job_application_list' %}">
+  <i class="bi bi-briefcase"></i> Job Applications
+</a>
+<a class="nav-link" href="{% url 'core:update_history' %}">
+  <i class="bi bi-clock-history"></i> Update History
 </a>
 {% endblock %}
 

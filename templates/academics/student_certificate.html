@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Certificate - {{ student.user.get_full_name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #000;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+        }
+        .institution-name {
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+        .institution-details {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .certificate-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin: 40px 0;
+            text-transform: uppercase;
+        }
+        .content {
+            font-size: 18px;
+            text-align: justify;
+            margin: 0 20px;
+            line-height: 2;
+        }
+        .highlight {
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 100px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature-box {
+            text-align: center;
+            width: 200px;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 60px;
+            padding-top: 10px;
+            font-weight: bold;
+        }
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: sans-serif;
+        }
+        @media print {
+            .print-btn {
+                display: none;
+            }
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">Print Certificate</button>
+
+    <div class="header">
+        {% if institution %}
+            <h1 class="institution-name">{{ institution.name }}</h1>
+            <div class="institution-details">
+                {{ institution.address|linebreaksbr }}<br>
+                Phone: {{ institution.phone }} | Email: {{ institution.email }}
+            </div>
+        {% else %}
+            <h1 class="institution-name">ADABIYYA INSTITUTIONS</h1>
+        {% endif %}
+    </div>
+
+    <div class="certificate-title">Study Certificate</div>
+
+    <div class="content">
+        <p>This is to certify that <strong>{{ student.user.get_full_name|upper }}</strong> 
+        (Admission No: <strong>{{ student.admission_number }}</strong>) is a bona fide student of this institution.</p>
+
+        <p>
+            {% if student.user.gender == 'M' %}He{% else %}She{% endif %} is currently studying in 
+            <strong>{{ student.classroom.standard }}</strong> 
+            (Division: <strong>{{ student.classroom.division|default:"-" }}</strong>) 
+            during the academic year <strong>{{ student.classroom.academic_year.name }}</strong>.
+        </p>
+
+        <p>
+            {% if student.user.gender == 'M' %}His{% else %}Her{% endif %} date of birth as per our records is 
+            <strong>{{ student.date_of_birth|date:"d F Y" }}</strong>.
+        </p>
+        
+        <p>
+            {% if student.user.gender == 'M' %}His{% else %}Her{% endif %} character and conduct during the period of study have been <strong>GOOD</strong>.
+        </p>
+    </div>
+
+    <div class="footer">
+        <div class="place-date">
+            <p><strong>Date: </strong> {% now "d F Y" %}</p>
+            <p><strong>Place: </strong> Kerala</p>
+        </div>
+        <div class="signature-box">
+            <div class="signature-line">Principal</div>
+            <div style="font-size: 12px;">(Seal & Signature)</div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -29,6 +29,8 @@ class Institution(models.Model):
     address = models.TextField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
+    description = models.TextField(blank=True, help_text=_("Detailed description of the institution"))
+    image = models.ImageField(upload_to="institutions/", blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -110,3 +112,36 @@ class JobOpening(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+
+class JobApplication(models.Model):
+    """Job application submitted via the website."""
+
+    STATUS_PENDING = 'PENDING'
+    STATUS_REVIEWED = 'REVIEWED'
+    STATUS_SHORTLISTED = 'SHORTLISTED'
+    STATUS_REJECTED = 'REJECTED'
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending Review'),
+        (STATUS_REVIEWED, 'Reviewed'),
+        (STATUS_SHORTLISTED, 'Shortlisted'),
+        (STATUS_REJECTED, 'Rejected'),
+    ]
+
+    job = models.ForeignKey(JobOpening, on_delete=models.CASCADE, related_name='applications')
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    resume = models.FileField(upload_to='resumes/')
+    cover_letter = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-submitted_at"]
+        verbose_name = _("Job Application")
+        verbose_name_plural = _("Job Applications")
+
+    def __str__(self) -> str:
+        return f"{self.full_name} - {self.job.title}"

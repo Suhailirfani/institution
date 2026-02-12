@@ -40,10 +40,24 @@ class AdmissionApplication(models.Model):
         on_delete=models.PROTECT,
         related_name="admission_applications",
     )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="applications",
+        null=True,  # Allow null for now to support existing records or anonymous applications if needed
+        blank=True,
+    )
     programme = models.ForeignKey(
         Programme,
         on_delete=models.PROTECT,
         related_name="applications",
+    )
+    institution = models.ForeignKey(
+        Institution,
+        on_delete=models.PROTECT,
+        related_name="admission_applications_institution",
+        null=True,
+        blank=True,
     )
 
     # Applicant basic info (no login required for MVP)

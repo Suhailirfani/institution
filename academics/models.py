@@ -67,6 +67,9 @@ class StaffProfile(models.Model):
     department = models.CharField(max_length=255, blank=True)
     qualification = models.CharField(max_length=255, blank=True)
     joining_date = models.DateField(null=True, blank=True)
+    mobile_number = models.CharField(max_length=20, help_text=_("Contact Number"), default="")
+    place = models.CharField(max_length=100, help_text=_("City/Town/Village"), default="")
+    address = models.TextField(blank=True, default="")
 
     def __str__(self) -> str:
         return f"{self.user.get_full_name() or self.user.username}"
@@ -81,11 +84,23 @@ class StudentProfile(models.Model):
         related_name="student_profile",
     )
     admission_number = models.CharField(max_length=50, unique=True)
+    whatsapp_number = models.CharField(max_length=20, blank=True, help_text=_("Active WhatsApp number"))
     date_of_birth = models.DateField()
     classroom = models.ForeignKey(
         ClassRoom,
         on_delete=models.PROTECT,
         related_name="students",
+    )
+    father_name = models.CharField(max_length=100, blank=True)
+    mother_name = models.CharField(max_length=100, blank=True)
+    address = models.TextField(blank=True)
+    blood_group = models.CharField(
+        max_length=5, 
+        blank=True, 
+        choices=[
+            ('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
+            ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')
+        ]
     )
 
     def __str__(self) -> str:

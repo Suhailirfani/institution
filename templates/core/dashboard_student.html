@@ -4,41 +4,108 @@
 {% block dashboard_title %}Student Dashboard{% endblock %}
 
 {% block dashboard_sidebar %}
-  <a class="nav-link" href="#">
-    <i class="bi bi-calendar-check"></i> Attendance
-  </a>
-  <a class="nav-link" href="#">
-    <i class="bi bi-trophy"></i> Results
-  </a>
-  <a class="nav-link" href="#">
-    <i class="bi bi-book"></i> Syllabus
-  </a>
-  <a class="nav-link" href="#">
-    <i class="bi bi-credit-card"></i> Fee Payment
-  </a>
+<a class="nav-link" href="#">
+  <i class="bi bi-calendar-check"></i> Attendance
+</a>
+<a class="nav-link" href="#">
+  <i class="bi bi-trophy"></i> Results
+</a>
+<a class="nav-link" href="#">
+  <i class="bi bi-book"></i> Syllabus
+</a>
+<a class="nav-link" href="{% url 'academics:student_self_detail' %}">
+  <i class="bi bi-person-lines-fill"></i> My Profile
+</a>
+<a class="nav-link" href="#">
+  <i class="bi bi-credit-card"></i> Fee Payment
+</a>
 {% endblock %}
 
 {% block dashboard_content %}
-  <div class="row g-4 mb-4">
-    <div class="col-md-4">
-      {% include 'components/kpi_card.html' with value='0' label='Attendance %' icon='bi-calendar-check' %}
-    </div>
-    <div class="col-md-4">
-      {% include 'components/kpi_card.html' with value='0' label='Exams Completed' icon='bi-file-earmark-text' %}
-    </div>
-    <div class="col-md-4">
-      {% include 'components/kpi_card.html' with value='0' label='Pending Fees' icon='bi-currency-rupee' %}
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    {% include 'components/kpi_card.html' with value='0' label='Attendance %' icon='bi-calendar-check' %}
+  </div>
+  <div class="col-md-4">
+    {% include 'components/kpi_card.html' with value='0' label='Exams Completed' icon='bi-file-earmark-text' %}
+  </div>
+  <div class="col-md-4">
+    {% include 'components/kpi_card.html' with value='0' label='Pending Fees' icon='bi-currency-rupee' %}
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Enrolled Course -->
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="mb-0 text-primary"><i class="bi bi-mortarboard me-2"></i>My Enrolled Course</h5>
+      </div>
+      <div class="card-body">
+        {% if student_profile %}
+        <div class="d-flex align-items-center mb-3">
+          <div class="display-4 text-primary me-3">
+            <i class="bi bi-book"></i>
+          </div>
+          <div>
+            <h4 class="mb-1 fw-bold">{{ student_profile.classroom.standard }}</h4>
+            <span class="text-muted">Division: {{ student_profile.classroom.division|default:"N/A" }}</span>
+          </div>
+        </div>
+        <hr>
+        <p class="mb-1"><strong>Admission No:</strong> {{ student_profile.admission_number }}</p>
+        <p class="mb-0"><strong>Academic Year:</strong> {{ student_profile.classroom.academic_year.name }}</p>
+        {% else %}
+        <div class="text-center py-4">
+          <p class="text-muted mb-3">You are not currently enrolled in any active course.</p>
+          <a href="{% url 'admissions:apply' %}" class="btn btn-primary">Apply Now</a>
+        </div>
+        {% endif %}
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header">
-      <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Academic Information</h5>
-    </div>
-    <div class="card-body">
-      <p class="text-muted-custom">Your academic details will appear here.</p>
+  <!-- Application History -->
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="mb-0 text-info"><i class="bi bi-clock-history me-2"></i>Application History</h5>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Programme</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for app in applications %}
+              <tr>
+                <td>{{ app.programme.code }}</td>
+                <td>
+                  {% if app.status == 'APPROVED' %}
+                  <span class="badge bg-success">Approved</span>
+                  {% elif app.status == 'REJECTED' %}
+                  <span class="badge bg-danger">Rejected</span>
+                  {% else %}
+                  <span class="badge bg-warning text-dark">Pending</span>
+                  {% endif %}
+                </td>
+                <td>{{ app.submitted_at|date:"M d" }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="text-center py-4 text-muted">No applications found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 {% endblock %}
-
-

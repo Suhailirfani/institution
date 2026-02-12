@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ institution.name }} – Adabiyya Smart Connect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'core:institutions' %}">Institutions</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ institution.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                {% if institution.image %}
+                <img src="{{ institution.image.url }}" class="card-img-top" alt="{{ institution.name }}" style="max-height: 400px; object-fit: cover;">
+                {% else %}
+                <div class="bg-light text-center py-5">
+                    <i class="bi bi-building text-muted" style="font-size: 5rem;"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body p-4">
+                     <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-primary me-2">{{ institution.code }}</span>
+                     </div>
+                    <h1 class="card-title mb-4 font-malayalam-heading text-primary">{{ institution.name }}</h1>
+                    
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">About the Institution</h5>
+                        {% if institution.description %}
+                            <div class="font-malayalam-body" style="font-size: 1.1rem; line-height: 1.8;">
+                                {{ institution.description|linebreaks }}
+                            </div>
+                        {% else %}
+                            <p class="text-muted fst-italic">Detailed description coming soon.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Contact Info</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        {% if institution.address %}
+                        <li class="mb-3 d-flex">
+                            <i class="bi bi-geo-alt me-2 text-primary mt-1"></i>
+                            <span class="font-malayalam-body">{{ institution.address }}</span>
+                        </li>
+                        {% endif %}
+                        
+                        {% if institution.phone %}
+                        <li class="mb-3 d-flex">
+                            <i class="bi bi-telephone me-2 text-primary mt-1"></i>
+                            <span>{{ institution.phone }}</span>
+                        </li>
+                        {% endif %}
+                        
+                        {% if institution.email %}
+                        <li class="mb-3 d-flex">
+                            <i class="bi bi-envelope me-2 text-primary mt-1"></i>
+                            <a href="mailto:{{ institution.email }}">{{ institution.email }}</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title mb-3">Interested in joining?</h5>
+                    <p class="card-text text-muted mb-3">Apply now for admission to {{ institution.name }}</p>
+                    <a href="{% url 'accounts:signup' %}" class="btn btn-warning w-100 fw-bold">Apply For Admission</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

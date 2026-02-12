@@ -11,9 +11,27 @@ class CustomLoginView(auth_views.LoginView):
     template_name = "accounts/login.html"
     redirect_authenticated_user = True
     
+    
     def form_invalid(self, form):
         messages.error(self.request, "Invalid username or password.")
         return super().form_invalid(form)
+
+from .forms import ApplicantSignUpForm
+from django.views.generic import CreateView
+
+class SignUpView(CreateView):
+    form_class = ApplicantSignUpForm
+    success_url = reverse_lazy('accounts:login')
+    template_name = 'accounts/signup.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = _("Create Account")
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, _("Account created successfully. Please login."))
+        return super().form_valid(form)
 
 class ProfileView(LoginRequiredMixin, UpdateView):
     model = User

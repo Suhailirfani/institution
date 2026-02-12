@@ -31,9 +31,8 @@
                             Apply Now <i class="bi bi-box-arrow-up-right ms-1"></i>
                         </a>
                         {% else %}
-                        <a href="mailto:careers@adabiyya.org?subject=Application for {{ job.title }}"
-                            class="btn btn-primary">
-                            Apply via Email <i class="bi bi-envelope ms-1"></i>
+                        <a href="{% url 'core:job_application_create' job.id %}" class="btn btn-primary">
+                            Apply Now <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                         {% endif %}
                     </div>

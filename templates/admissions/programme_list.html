@@ -1,0 +1,73 @@
+{% extends "core/dashboard_base.html" %}
+{% load static %}
+
+{% block dashboard_title %}Manage Programmes{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">Programmes</h1>
+        {% if current_institution %}
+        <p class="mb-0 text-muted">Filtered by: <span class="fw-bold">{{ current_institution.name }}</span> <a href="{% url 'admissions:programme_list' %}" class="text-decoration-none small">(Clear)</a></p>
+        {% endif %}
+    </div>
+    <a href="{% url 'admissions:programme_create' %}{% if current_institution %}?institution={{ current_institution.pk }}{% endif %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Add Programme
+    </a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Institution</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for programme in programmes %}
+                    <tr>
+                        <td>{{ programme.code }}</td>
+                        <td>{{ programme.name }}</td>
+                        <td>{{ programme.institution.name }}</td>
+                        <td>
+                            {% if programme.is_active %}
+                            <span class="badge bg-success">Active</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'admissions:programme_update' programme.pk %}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'admissions:programme_delete' programme.pk %}" class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">
+                            No programmes found. 
+                            {% if current_institution %}
+                            Click 'Add Programme' to add one for {{ current_institution.name }}.
+                            {% else %}
+                            Click 'Add Programme' to get started.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
