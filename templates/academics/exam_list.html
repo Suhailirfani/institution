@@ -1,0 +1,72 @@
+{% extends 'core/dashboard_base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">Exams</h2>
+            <p class="text-muted">Schedule exams and manage results.</p>
+        </div>
+        <a href="{% url 'academics:exam_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Schedule Exam
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Exam Name</th>
+                            <th>Classroom</th>
+                            <th>Date</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exam in exams %}
+                        <tr>
+                            <td class="ps-4 fw-bold">{{ exam.name }}</td>
+                            <td>{{ exam.classroom }}</td>
+                            <td>{{ exam.date|date:"d M Y" }}</td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                        Manage
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <!-- Header for subjects -->
+                                        <li><h6 class="dropdown-header">Enter Marks</h6></li>
+                                        {% for subject in exam.classroom.subjects.all %}
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'academics:exam_result_entry' exam.pk subject.pk %}">
+                                                <i class="bi bi-pencil-square me-2"></i>{{ subject.name }}
+                                            </a>
+                                        </li>
+                                        {% empty %}
+                                        <li><span class="dropdown-item text-muted">No subjects found</span></li>
+                                        {% endfor %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{% url 'academics:class_exam_result' exam.pk %}"><i class="bi bi-bar-chart-line me-2"></i>Class Results</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="bi bi-pencil me-2"></i>Edit Exam</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="bi bi-calendar-check display-4 mb-3 d-block"></i>
+                                No exams scheduled.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

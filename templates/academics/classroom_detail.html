@@ -16,40 +16,194 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0">Students</h5>
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="classroomTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students-pane" type="button" role="tab">
+                <i class="bi bi-people me-2"></i>Students
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="subjects-tab" data-bs-toggle="tab" data-bs-target="#subjects-pane" type="button" role="tab">
+                <i class="bi bi-book me-2"></i>Subjects
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="exams-tab" data-bs-toggle="tab" data-bs-target="#exams-pane" type="button" role="tab">
+                <i class="bi bi-pencil-square me-2"></i>Exams & Results
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="classroomTabsContent">
+        <!-- Students Tab -->
+        <div class="tab-pane fade show active" id="students-pane" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Student List</h5>
+                    <div>
+                        <a href="{% url 'academics:student_create' %}?classroom={{ classroom.pk }}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus-lg me-1"></i>Add Student
+                        </a>
+                         <a href="{% url 'academics:student_id_card_bulk' %}?class_id={{ classroom.pk }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-person-badge me-1"></i>ID Cards
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Admin No.</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                <tr>
+                                    <td class="ps-4">{{ student.admission_number }}</td>
+                                    <td>
+                                        <div class="fw-bold">{{ student.user.get_full_name }}</div>
+                                        <small class="text-muted">{{ student.whatsapp_number }}</small>
+                                    </td>
+                                    <td><span class="badge bg-success-subtle text-success">Active</span></td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                                                Actions
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="{% url 'academics:student_detail' student.pk %}"><i class="bi bi-eye me-2"></i>View Profile</a></li>
+                                                <li><a class="dropdown-item" href="{% url 'academics:student_id_card' student.pk %}"><i class="bi bi-card-heading me-2"></i>Download ID Card</a></li>
+                                                <li><a class="dropdown-item" href="{% url 'academics:progress_report' student.pk %}"><i class="bi bi-graph-up me-2"></i>Progress Report</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        <i class="bi bi-people display-4 mb-3 d-block"></i>
+                                        No students assigned to this class.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-4">Admin No.</th>
-                            <th>Name</th>
-                            <th>Date of Birth</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for student in students %}
-                        <tr>
-                            <td class="ps-4">{{ student.admission_number }}</td>
-                            <td>{{ student.user.get_full_name }}</td>
-                            <td>{{ student.date_of_birth }}</td>
-                            <td>
-                                <a href="{% url 'academics:student_detail' student.pk %}" class="btn btn-sm btn-light">
-                                    Profile
-                                </a>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="4" class="text-center py-4 text-muted">No students assigned to this class.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+
+        <!-- Subjects Tab -->
+        <div class="tab-pane fade" id="subjects-pane" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Subjects</h5>
+                    <a href="{% url 'academics:subject_create' %}?classroom={{ classroom.pk }}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>Add Subject
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Code</th>
+                                    <th>Name</th>
+                                    <th>Max Marks</th>
+                                    <th>Pass Marks</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subject in subjects %}
+                                <tr>
+                                    <td class="ps-4 fw-bold">{{ subject.code }}</td>
+                                    <td>{{ subject.name }}</td>
+                                    <td>{{ subject.max_marks }}</td>
+                                    <td>{{ subject.pass_marks }}</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="bi bi-book display-4 mb-3 d-block"></i>
+                                        No subjects found.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exams Tab -->
+        <div class="tab-pane fade" id="exams-pane" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Exams</h5>
+                    <a href="{% url 'academics:exam_create' %}?classroom={{ classroom.pk }}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>Schedule Exam
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Exam Name</th>
+                                    <th>Date</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for exam in exams %}
+                                <tr>
+                                    <td class="ps-4 fw-bold">{{ exam.name }}</td>
+                                    <td>{{ exam.date|date:"d M Y" }}</td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                                Enter Marks
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><h6 class="dropdown-header">Select Subject</h6></li>
+                                                {% for subject in subjects %}
+                                                <li>
+                                                    <a class="dropdown-item" href="{% url 'academics:exam_result_entry' exam.pk subject.pk %}">
+                                                        {{ subject.name }}
+                                                    </a>
+                                                </li>
+                                                {% empty %}
+                                                <li><span class="dropdown-item text-muted">No subjects available</span></li>
+                                                {% endfor %}
+                                            </ul>
+                                            <a href="{% url 'academics:class_exam_result' exam.pk %}" class="btn btn-sm btn-outline-success ms-1">
+                                                <i class="bi bi-bar-chart-line"></i> Results
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center py-5 text-muted">
+                                        <i class="bi bi-calendar-check display-4 mb-3 d-block"></i>
+                                        No exams scheduled.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Apply for Charity Aid – Adabiyya{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-md border-0">
+                <div class="card-header bg-success text-white py-3">
+                    <h4 class="mb-0 text-center"><i class="bi bi-heart-fill me-2"></i>Apply for Assistance</h4>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <p class="text-muted text-center mb-4">
+                        Please fill out the form below to request assistance from Adabiyya Charity Wing.
+                        All applications are reviewed by our committee.
+                    </p>
+
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.full_name.id_for_label }}" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                {% render_field form.full_name class+="form-control" placeholder="Enter full name" %}
+                                <div class="invalid-feedback">{{ form.full_name.errors.0 }}</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                {% render_field form.phone class+="form-control" placeholder="Contact number" %}
+                                <div class="invalid-feedback">{{ form.phone.errors.0 }}</div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.category.id_for_label }}" class="form-label">Type of Assistance <span class="text-danger">*</span></label>
+                                {% render_field form.category class+="form-select" %}
+                                <div class="invalid-feedback">{{ form.category.errors.0 }}</div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">Description of Situation <span class="text-danger">*</span></label>
+                                {% render_field form.description class+="form-control" placeholder="Please describe your situation and why you need assistance..." %}
+                                <div class="text-muted small mt-1">Provide as much detail as possible to help us understand your needs.</div>
+                                <div class="invalid-feedback">{{ form.description.errors.0 }}</div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.document.id_for_label }}" class="form-label">Supporting Document (Optional)</label>
+                                {% render_field form.document class+="form-control" %}
+                                <div class="text-muted small mt-1">Upload medical reports, ration card copy, or other relevant documents.</div>
+                                <div class="invalid-feedback">{{ form.document.errors.0 }}</div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">Submit Application</button>
+                            <a href="{% url 'core:home' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -41,6 +41,27 @@
                             <p class="text-muted fst-italic">Detailed description coming soon.</p>
                         {% endif %}
                     </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">Academic Programs</h5>
+                        {% if classrooms %}
+                            <div class="list-group list-group-flush">
+                                {% for classroom in classrooms %}
+                                <a href="{% url 'academics:classroom_detail' classroom.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0 text-primary">{{ classroom.standard }}</h6>
+                                        {% if classroom.division %}
+                                        <small class="text-muted">Division {{ classroom.division }}</small>
+                                        {% endif %}
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted"></i>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted fst-italic">No active programs listed for this year.</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

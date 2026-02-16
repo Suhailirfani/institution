@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Academic Transcript - {{ student.user.get_full_name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+        body {
+            font-family: "Helvetica", "Arial", sans-serif;
+            font-size: 11pt;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+        .institution-name {
+            font-size: 24pt;
+            font-weight: bold;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .report-title {
+            font-size: 16pt;
+            font-weight: bold;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+        .student-details {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .student-details td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        .label {
+            font-weight: bold;
+            width: 120px;
+        }
+        table.results {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        table.results th, table.results td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+        }
+        table.results th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        table.results td.subject-name {
+            text-align: left;
+        }
+        .summary {
+            margin-top: 20px;
+            text-align: right;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 50px;
+            width: 100%;
+        }
+        .signature {
+            border-top: 1px solid #333;
+            width: 200px;
+            text-align: center;
+            padding-top: 10px;
+            float: right; /* Use float for basic PDF layout usually */
+        }
+        /* Flexbox support in xhtml2pdf is limited, use tables for layout */
+        .signatures-table {
+            width: 100%;
+            margin-top: 80px;
+        }
+        .signatures-table td {
+            vertical-align: top;
+            text-align: center;
+        }
+        .sig-line {
+            border-top: 1px solid #333;
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        {% if student.classroom.institution %}
+        <div class="institution-name">{{ student.classroom.institution.name }}</div>
+        <div>{{ student.classroom.institution.address }}</div>
+        {% else %}
+        <div class="institution-name">Adabiyya Institutions</div>
+        {% endif %}
+        <div class="report-title">Academic Transcript</div>
+        <div>Academic Year: {{ student.classroom.academic_year.name }}</div>
+    </div>
+
+    <table class="student-details">
+        <tr>
+            <td class="label">Name:</td>
+            <td><strong>{{ student.user.get_full_name }}</strong></td>
+            <td class="label">Admission No:</td>
+            <td>{{ student.admission_number }}</td>
+        </tr>
+        <tr>
+            <td class="label">Class:</td>
+            <td>{{ student.classroom.standard }} {{ student.classroom.division|default:"" }}</td>
+            <td class="label">Date of Birth:</td>
+            <td>{{ student.date_of_birth|date:"d M Y" }}</td>
+        </tr>
+    </table>
+
+    {% for exam_group in exams_data %}
+    <div style="margin-bottom: 20px; font-weight: bold; font-size: 14pt;">
+        {{ exam_group.exam.name }} <span style="font-size: 10pt; font-weight: normal;">({{ exam_group.exam.date|date:"d M Y" }})</span>
+    </div>
+    
+    <table class="results">
+        <thead>
+            <tr>
+                <th style="width: 40%;">Subject</th>
+                <th style="width: 20%;">Max Marks</th>
+                <th style="width: 20%;">Obtained</th>
+                <th style="width: 20%;">Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for res in exam_group.results %}
+            <tr>
+                <td class="subject-name">{{ res.subject.name }} ({{ res.subject.code }})</td>
+                <td>{{ res.max_marks|floatformat:0 }}</td>
+                <td>{{ res.marks_obtained|floatformat:2 }}</td>
+                <td>{{ res.grade }}</td>
+            </tr>
+            {% endfor %}
+            <tr style="background-color: #f9f9f9; font-weight: bold;">
+                <td class="subject-name">TOTAL</td>
+                <td>{{ exam_group.max_total|floatformat:0 }}</td>
+                <td>{{ exam_group.total_marks|floatformat:2 }}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div style="margin-bottom: 40px;">
+        <strong>Performance Summary:</strong><br>
+        Percentage: {{ exam_group.percentage|floatformat:2 }}%<br>
+        Class Rank: {{ exam_group.rank }}
+    </div>
+    
+    {% if not forloop.last %}<pdf:nextpage />{% endif %}
+    {% endfor %}
+
+    <table class="signatures-table">
+        <tr>
+            <td>
+                <div class="sig-line">Class Teacher</div>
+            </td>
+            <td>
+                <div class="sig-line">Parent / Guardian</div>
+            </td>
+            <td>
+                <div class="sig-line">Principal</div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

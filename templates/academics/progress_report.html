@@ -21,6 +21,9 @@
                     <button onclick="window.print()" class="btn btn-outline-primary btn-sm d-print-none">
                         <i class="bi bi-printer"></i> Print
                     </button>
+                    <a href="{% url 'academics:student_marksheet' student.pk %}" class="btn btn-outline-success btn-sm d-print-none ms-2">
+                        <i class="bi bi-file-pdf"></i> Download PDF
+                    </a>
                 </div>
             </div>
         </div>
@@ -91,6 +94,14 @@
                             <td class="text-center">{{ exam_group.max_total }}</td>
                             <td class="text-center">{{ exam_group.total_marks }}</td>
                             <td></td>
+                        </tr>
+                        <tr class="bg-light">
+                            <td colspan="4">
+                                <div class="d-flex justify-content-between px-3">
+                                    <span>Percentage: <span class="text-primary">{{ exam_group.percentage|floatformat:2 }}%</span></span>
+                                    <span>Class Rank: <span class="text-primary">{{ exam_group.rank }}</span></span>
+                                </div>
+                            </td>
                         </tr>
                     </tfoot>
                 </table>

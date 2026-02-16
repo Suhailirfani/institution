@@ -1,6 +1,6 @@
 from django import forms
 from accounts.models import User
-from .models import ClassRoom, StudentProfile, StaffProfile, Subject
+from .models import ClassRoom, StudentProfile, StaffProfile, Subject, Exam, ExamResult
 
 class ClassRoomForm(forms.ModelForm):
     class Meta:
@@ -198,3 +198,56 @@ class StudentBulkImportForm(forms.Form):
         help_text="Upload .xlsx file with columns: First Name, Last Name, Email, DOB, Admin No, WhatsApp, Class Code, Father Name, Mother Name, Address, Blood Group"
     )
 
+
+# --- Result Management Forms ---
+
+class SubjectForm(forms.ModelForm):
+    class Meta:
+        model = Subject
+        fields = ['name', 'code', 'classroom', 'max_marks', 'pass_marks']
+        widgets = {
+             # classroom is typically handled in view context or hidden
+        }
+
+class ExamForm(forms.ModelForm):
+    class Meta:
+        model = Exam
+        fields = ['name', 'academic_year', 'classroom', 'date']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class ExamResultForm(forms.ModelForm):
+    class Meta:
+        model = ExamResult
+        fields = ['student', 'subject', 'marks_obtained', 'max_marks']
+        
+    def clean(self):
+        cleaned_data = super().clean()
+        marks = cleaned_data.get('marks_obtained')
+        max_marks = cleaned_data.get('max_marks')
+        
+        if marks and max_marks and marks > max_marks:
+            self.add_error('marks_obtained', "Marks obtained cannot exceed maximum marks.")
+        return cleaned_data
+
+class BulkExamResultForm(forms.Form):
+    """
+    Form for entering marks for a single student in a bulk entry view.
+    Designed to be used in a formset.
+    """
+    student_id = forms.IntegerField(widget=forms.HiddenInput())
+    student_name = forms.CharField(disabled=True, required=False)
+    marks_obtained = forms.DecimalField(max_digits=5, decimal_places=2, min_value=0, required=False)
+    is_absent = forms.BooleanField(required=False, label="Absent")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        marks = cleaned_data.get('marks_obtained')
+        is_absent = cleaned_data.get('is_absent')
+
+        if not is_absent and marks is None:
+             # It's okay to have empty marks (not entered yet), but if absent is false and marks are valid...
+             # Actually, let's allow empty to mean "not entered".
+             pass
+        return cleaned_data

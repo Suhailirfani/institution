@@ -1,0 +1,64 @@
+{% extends 'core/dashboard_base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">Subjects</h2>
+            <p class="text-muted">Manage subjects and marks configuration.</p>
+        </div>
+        <a href="{% url 'academics:subject_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>Add Subject
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Code</th>
+                            <th>Name</th>
+                            <th>Classroom</th>
+                            <th>Max Marks</th>
+                            <th>Pass Marks</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subject in subjects %}
+                        <tr>
+                            <td class="ps-4 fw-bold">{{ subject.code }}</td>
+                            <td>{{ subject.name }}</td>
+                            <td>{{ subject.classroom }}</td>
+                            <td>{{ subject.max_marks }}</td>
+                            <td>{{ subject.pass_marks }}</td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#"><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                                        <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-book display-4 mb-3 d-block"></i>
+                                No subjects found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -198,3 +198,50 @@ class ProgrammeDeleteView(RoleRequiredMixin, DeleteView):
     success_url = reverse_lazy('admissions:programme_list')
     template_name = "core/confirm_delete.html"
     allowed_roles = [User.Roles.ADMIN]
+
+from django.views.generic import View
+from django.http import HttpResponse
+from core.utils import render_to_pdf
+import datetime
+
+class AdmissionLetterView(LoginRequiredMixin, View):
+    def get(self, request, pk, *args, **kwargs):
+        try:
+            application = AdmissionApplication.objects.select_related('user', 'programme').get(pk=pk, user=request.user)
+        except AdmissionApplication.DoesNotExist:
+            messages.error(request, _("Application not found."))
+            return redirect('admissions:dashboard')
+
+        if application.status != AdmissionApplication.Status.APPROVED:
+            messages.error(request, _("Admission letter is only available for approved applications."))
+            return redirect('admissions:dashboard')
+
+        # Get student profile for Roll No (Admission Number)
+        roll_no = "N/A"
+        admission_date = application.updated_at if hasattr(application, 'updated_at') else datetime.date.today() # Fallback
+        
+        if hasattr(application.user, 'student_profile'):
+            roll_no = application.user.student_profile.admission_number
+            # Use student profile created date as admission date if available
+            if hasattr(application.user.student_profile, 'date_of_joining'):
+                 admission_date = application.user.student_profile.date_of_joining
+
+        # Reporting info (hardcoded for now as per request)
+        reporting_date = datetime.date.today() + datetime.timedelta(days=7) # Example: 1 week from now
+        reporting_time = datetime.time(9, 0) # 9:00 AM
+
+        context = {
+            'application': application,
+            'roll_no': roll_no,
+            'admission_date': admission_date,
+            'reporting_date': reporting_date,
+            'reporting_time': reporting_time,
+        }
+
+        pdf = render_to_pdf('admissions/pdf/admission_letter.html', context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = f"Admission_Letter_{application.id}.pdf"
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        return HttpResponse("Error generating PDF", status=500)

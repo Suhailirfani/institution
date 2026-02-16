@@ -1,0 +1,80 @@
+{% extends 'core/dashboard_base.html' %}
+{% load static widget_tweaks %}
+
+{% block dashboard_content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Enter Marks</h4>
+                        <div>
+                            <span class="badge bg-light text-dark border me-2">{{ exam.name }}</span>
+                            <span class="badge bg-primary">{{ subject.name }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="mb-1 text-muted">Classroom</p>
+                            <h5 class="fw-bold">{{ exam.classroom }}</h5>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <p class="mb-1 text-muted">Max Marks</p>
+                            <h5 class="fw-bold">{{ subject.max_marks }}</h5>
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ formset.management_form }}
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Student</th>
+                                        <th style="width: 200px;">Marks Obtained</th>
+                                        <th style="width: 100px;">Absent</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for form in formset %}
+                                    <tr>
+                                        <td>
+                                            {{ form.student_id }}
+                                            {{ form.initial.student_name }}
+                                            {% if form.instance.pk %}{{ form.DELETE }}{% endif %}
+                                        </td>
+                                        <td>
+                                            {% render_field form.marks_obtained class="form-control" %}
+                                            {% if form.marks_obtained.errors %}
+                                                <div class="text-danger small mt-1">{{ form.marks_obtained.errors.0 }}</div>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="form-check d-flex justify-content-center">
+                                                {% render_field form.is_absent class="form-check-input" %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{% url 'academics:classroom_detail' exam.classroom.pk %}" class="btn btn-outline-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-save me-2"></i>Save Marks
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

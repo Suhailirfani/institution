@@ -4,17 +4,23 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
+from django.shortcuts import render, redirect
+from django.db import models
 
 from accounts.models import User
 from core.views import RoleRequiredMixin
 from core.services import NotificationService
-from .models import ClassRoom, StudentProfile, StaffProfile, AttendanceRecord, ExamResult
+from core.utils import render_to_pdf
+from .models import ClassRoom, StudentProfile, StaffProfile, AttendanceRecord, ExamResult, Subject, Exam
 from django.contrib import messages
 from django.views.generic import FormView
 from .forms import (
     ClassRoomForm, StudentProfileForm, StaffCreationForm, StudentCreationForm, 
-    StudentUpdateForm, StudentBulkImportForm, StaffUpdateForm, StaffBulkImportForm
+    StudentUpdateForm, StudentBulkImportForm, StaffUpdateForm, StaffBulkImportForm,
+    SubjectForm, ExamForm, BulkExamResultForm
 )
+from django.forms import formset_factory
+from django.db import transaction
 import openpyxl
 from django.contrib import messages
 from django.views.generic import FormView
@@ -38,6 +44,8 @@ class ClassRoomDetailView(RoleRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['students'] = self.object.students.all().select_related('user')
+        context['subjects'] = self.object.subjects.all()
+        context['exams'] = self.object.exams.all().order_by('-date')
         return context
 
 class ClassRoomCreateView(RoleRequiredMixin, CreateView):
@@ -399,8 +407,9 @@ class ProgressReportView(RoleRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        student = self.object
         # Fetch all results for this student
-        results = ExamResult.objects.filter(student=self.object).select_related('exam', 'subject')
+        results = ExamResult.objects.filter(student=student).select_related('exam', 'subject')
         
         # Group by Exam
         exams_data = {}
@@ -410,13 +419,75 @@ class ProgressReportView(RoleRequiredMixin, DetailView):
                     'exam': res.exam,
                     'results': [],
                     'total_marks': 0,
-                    'max_total': 0
+                    'max_total': 0,
+                    'percentage': 0,
+                    'rank': 0
                 }
             exams_data[res.exam]['results'].append(res)
             exams_data[res.exam]['total_marks'] += res.marks_obtained
             exams_data[res.exam]['max_total'] += res.max_marks
             
+        # Calculate Rank and Percentage
+        for exam, data in exams_data.items():
+            if data['max_total'] > 0:
+                data['percentage'] = (data['total_marks'] / data['max_total']) * 100
+                
+            # Rank Calculation (Expensive but okay for small classes)
+            # Get all students in class
+            class_students = StudentProfile.objects.filter(classroom=exam.classroom)
+            exam_totals = []
+            for s in class_students:
+                # Sum marks for this student in this exam
+                total = ExamResult.objects.filter(exam=exam, student=s).aggregate(t=models.Sum('marks_obtained'))['t'] or 0
+                exam_totals.append(total)
+            
+            # Sort descending
+            exam_totals.sort(reverse=True)
+            # Find rank
+            try:
+                data['rank'] = exam_totals.index(data['total_marks']) + 1
+            except ValueError:
+                data['rank'] = '-'
+            
         context['exams_data'] = exams_data.values()
+        return context
+
+class ClassExamResultView(RoleRequiredMixin, DetailView):
+    model = Exam
+    template_name = "academics/class_exam_result.html"
+    context_object_name = 'exam'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.STAFF]
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        exam = self.object
+        students = StudentProfile.objects.filter(classroom=exam.classroom).select_related('user')
+        
+        student_results = []
+        for student in students:
+            # Aggregate marks
+            results = ExamResult.objects.filter(exam=exam, student=student)
+            total_marks = results.aggregate(t=models.Sum('marks_obtained'))['t'] or 0
+            max_marks = results.aggregate(t=models.Sum('max_marks'))['t'] or 0
+            
+            percentage = (total_marks / max_marks * 100) if max_marks > 0 else 0
+            
+            student_results.append({
+                'student': student,
+                'total_marks': total_marks,
+                'max_marks': max_marks,
+                'percentage': percentage,
+            })
+            
+        # Sort by total marks desc
+        student_results.sort(key=lambda x: x['total_marks'], reverse=True)
+        
+        # Add Rank
+        for i, item in enumerate(student_results):
+            item['rank'] = i + 1
+            
+        context['student_results'] = student_results
+        context['toppers'] = student_results[:5] # Top 5
         return context
 
 class StudentCertificateView(RoleRequiredMixin, DetailView):
@@ -434,3 +505,313 @@ class StudentCertificateView(RoleRequiredMixin, DetailView):
              from core.models import Institution
              context['institution'] = Institution.objects.filter(is_active=True).first()
         return context
+
+# --- ID Card Views ---
+class StudentIDCardView(RoleRequiredMixin, DetailView):
+    model = StudentProfile
+    template_name = "academics/pdf/student_id.html"
+    context_object_name = 'student'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.STAFF, User.Roles.STUDENT]
+
+    def render_to_response(self, context, **response_kwargs):
+        # We need a list for the template even for single item to reuse template logic
+        context['students'] = [self.object]
+        pdf = render_to_pdf(self.template_name, context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = f"Identity_Card_{self.object.admission_number}.pdf"
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        return HttpResponse("Error generating PDF", status=500)
+
+class StudentBulkIDCardView(RoleRequiredMixin, View):
+    allowed_roles = [User.Roles.ADMIN, User.Roles.STAFF]
+
+    def get(self, request, *args, **kwargs):
+        # Optional: Filter by Class
+        class_id = request.GET.get('class_id')
+        if class_id:
+            students = StudentProfile.objects.filter(classroom_id=class_id).select_related('user', 'classroom', 'classroom__institution')
+        else:
+            students = StudentProfile.objects.all().select_related('user', 'classroom', 'classroom__institution')
+
+        if not students.exists():
+            messages.warning(request, "No students found to generate ID cards.")
+            return HttpResponse("No students found", status=404)
+
+        context = {'students': students}
+        pdf = render_to_pdf("academics/pdf/student_id.html", context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "Student_ID_Cards_Bulk.pdf"
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        return HttpResponse("Error generating PDF", status=500)
+
+class StaffIDCardView(RoleRequiredMixin, DetailView):
+    model = StaffProfile
+    template_name = "academics/pdf/staff_id.html"
+    context_object_name = 'staff'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.STAFF] # Staff can download their own
+
+    def render_to_response(self, context, **response_kwargs):
+        context['staff_members'] = [self.object]
+        pdf = render_to_pdf(self.template_name, context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = f"Staff_Identity_Card_{self.object.user.username}.pdf"
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        return HttpResponse("Error generating PDF", status=500)
+
+class StaffBulkIDCardView(RoleRequiredMixin, View):
+    allowed_roles = [User.Roles.ADMIN]
+
+    def get(self, request, *args, **kwargs):
+        staff_members = StaffProfile.objects.all().select_related('user', 'institution')
+        
+        if not staff_members.exists():
+             messages.warning(request, "No staff members found.")
+             return HttpResponse("No staff found", status=404)
+
+        context = {'staff_members': staff_members}
+        pdf = render_to_pdf("academics/pdf/staff_id.html", context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "Staff_ID_Cards_Bulk.pdf"
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        return HttpResponse("Error generating PDF", status=500)
+
+# --- Result Management Views ---
+
+class SubjectListView(RoleRequiredMixin, ListView):
+    model = Subject
+    template_name = "components/data_table.html"
+    context_object_name = 'subjects'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.STAFF]
+    
+    def get_queryset(self):
+        # Filter by classroom if provided
+        classroom_id = self.request.GET.get('classroom')
+        if classroom_id:
+             return Subject.objects.filter(classroom_id=classroom_id).select_related('classroom')
+        return Subject.objects.all().select_related('classroom')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['table_title'] = _("Subjects")
+        context['columns'] = [
+             {'header': 'Code', 'field': 'code'},
+             {'header': 'Name', 'field': 'name'},
+             {'header': 'Classroom', 'field': 'classroom'},
+             {'header': 'Max Marks', 'field': 'max_marks'},
+             {'header': 'Pass Marks', 'field': 'pass_marks'},
+             {'header': 'Action', 'field': 'action'},
+        ]
+        self.template_name = "academics/subject_list.html"
+        return context
+
+class SubjectCreateView(RoleRequiredMixin, CreateView):
+    model = Subject
+    form_class = SubjectForm
+    template_name = "core/generic_form.html"
+    success_url = reverse_lazy('academics:subject_list') # Redirects to list, better if to class detail
+    allowed_roles = [User.Roles.ADMIN]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = _("Add Subject")
+        return context
+        
+    def get_success_url(self):
+        classroom_id = self.object.classroom.id
+        return reverse_lazy('academics:classroom_detail', kwargs={'pk': classroom_id})
+
+class ExamListView(RoleRequiredMixin, ListView):
+    model = Exam
+    template_name = "components/data_table.html"
+    context_object_name = 'exams'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.STAFF]
+    
+    def get_queryset(self):
+        classroom_id = self.request.GET.get('classroom')
+        if classroom_id:
+             return Exam.objects.filter(classroom_id=classroom_id).select_related('classroom', 'academic_year')
+        return Exam.objects.all().select_related('classroom', 'academic_year')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['table_title'] = _("Exams")
+        context['columns'] = [
+             {'header': 'Name', 'field': 'name'},
+             {'header': 'Classroom', 'field': 'classroom'},
+             {'header': 'Date', 'field': 'date'},
+             {'header': 'Action', 'field': 'action'},
+        ]
+        self.template_name = "academics/exam_list.html"
+        return context
+
+class ExamCreateView(RoleRequiredMixin, CreateView):
+    model = Exam
+    form_class = ExamForm
+    template_name = "core/generic_form.html"
+    allowed_roles = [User.Roles.ADMIN]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = _("Schedule Exam")
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('academics:classroom_detail', kwargs={'pk': self.object.classroom.pk})
+
+# Data Entry View
+class ExamResultEntryView(RoleRequiredMixin, View):
+    allowed_roles = [User.Roles.ADMIN, User.Roles.STAFF]
+    template_name = "academics/result_entry.html"
+
+    def get(self, request, exam_id, subject_id):
+        exam = Exam.objects.get(pk=exam_id)
+        subject = Subject.objects.get(pk=subject_id)
+        
+        # Get all students in the exam's classroom
+        students = StudentProfile.objects.filter(classroom=exam.classroom).order_by('admission_number')
+        
+        # Get existing results to pre-fill
+        existing_results = ExamResult.objects.filter(exam=exam, subject=subject).in_bulk(field_name='student_id')
+        
+        initial_data = []
+        for student in students:
+            result = existing_results.get(student.id)
+            initial_data.append({
+                'student_id': student.id,
+                'student_name': student.user.get_full_name() or student.admission_number,
+                'marks_obtained': result.marks_obtained if result else None,
+                'is_absent': False, # Can elaborate this later if we track absent state explicitly in DB
+            })
+            
+        BulkResultFormSet = formset_factory(BulkExamResultForm, extra=0)
+        # We need to manually populate the formset initial data because it's a bit tricky with formsets
+        # But let's try passing initial to formset_factory result instantiation
+        formset = BulkResultFormSet(initial=initial_data)
+        
+        context = {
+            'exam': exam,
+            'subject': subject,
+            'formset': formset,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, exam_id, subject_id):
+        exam = Exam.objects.get(pk=exam_id)
+        subject = Subject.objects.get(pk=subject_id)
+        
+        BulkResultFormSet = formset_factory(BulkExamResultForm)
+        formset = BulkResultFormSet(request.POST) 
+        
+        if formset.is_valid():
+            with transaction.atomic():
+                for form in formset:
+                    data = form.cleaned_data
+                    if not data: continue # Empty form
+                    
+                    student_id = data.get('student_id')
+                    marks = data.get('marks_obtained')
+                    is_absent = data.get('is_absent')
+                    
+                    if student_id:
+                        student = StudentProfile.objects.get(pk=student_id)
+                        
+                        if marks is not None:
+                            ExamResult.objects.update_or_create(
+                                exam=exam,
+                                student=student,
+                                subject=subject,
+                                defaults={
+                                    'marks_obtained': marks,
+                                    'max_marks': subject.max_marks, # Default to subject's max marks
+                                    'grade': '', # Calculate grade later if needed
+                                }
+                            )
+            messages.success(request, _("Marks saved successfully."))
+            return redirect('academics:classroom_detail', pk=exam.classroom.pk)
+            
+        context = {
+            'exam': exam,
+            'subject': subject,
+            'formset': formset,
+        }
+        return render(request, self.template_name, context)
+
+
+class StudentCertificateView(RoleRequiredMixin, DetailView):
+    model = StudentProfile
+    template_name = "academics/student_certificate.html"
+    context_object_name = 'student'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.STAFF, User.Roles.STUDENT, User.Roles.PARENT] # Accessible to students too
+
+    def render_to_response(self, context, **response_kwargs):
+        pdf = render_to_pdf(self.template_name, context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = f"Certificate_{self.object.admission_number}.pdf"
+            response['Content-Disposition'] = f'inline; filename="{filename}"'
+            return response
+        return HttpResponse("Error generating PDF", status=500)
+
+
+class StudentMarksheetPDFView(RoleRequiredMixin, DetailView):
+    model = StudentProfile
+    template_name = "academics/pdf/marksheet.html"
+    context_object_name = 'student'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.STAFF, User.Roles.STUDENT, User.Roles.PARENT]
+
+    def render_to_response(self, context, **response_kwargs):
+        # We need to populate context with exam data same as ProgressReportView
+        student = self.object
+        results = ExamResult.objects.filter(student=student).select_related('exam', 'subject')
+        
+        exams_data = {}
+        for res in results:
+            if res.exam not in exams_data:
+                exams_data[res.exam] = {
+                    'exam': res.exam,
+                    'results': [],
+                    'total_marks': 0,
+                    'max_total': 0,
+                    'percentage': 0,
+                    'rank': 0
+                }
+            exams_data[res.exam]['results'].append(res)
+            exams_data[res.exam]['total_marks'] += res.marks_obtained
+            exams_data[res.exam]['max_total'] += res.max_marks
+            
+        for exam, data in exams_data.items():
+            if data['max_total'] > 0:
+                data['percentage'] = (data['total_marks'] / data['max_total']) * 100
+            
+            # Rank Calculation (simplified for PDF view, separate query for each student)
+            class_students = StudentProfile.objects.filter(classroom=exam.classroom)
+            exam_totals = []
+            for s in class_students:
+                 # Optimize: We could annotatate but this is distinct queries in loop
+                 # For MVP stick to loop or duplicate logic
+                total = ExamResult.objects.filter(exam=exam, student=s).aggregate(t=models.Sum('marks_obtained'))['t'] or 0
+                exam_totals.append(total)
+            exam_totals.sort(reverse=True)
+            try:
+                data['rank'] = exam_totals.index(data['total_marks']) + 1
+            except ValueError:
+                data['rank'] = '-'
+
+        context['exams_data'] = exams_data.values()
+        
+        pdf = render_to_pdf(self.template_name, context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = f"Marksheet_{student.admission_number}.pdf"
+            # Use attachment to trigger download instead of inline preview
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        return HttpResponse("Error generating PDF", status=500)

@@ -1,0 +1,94 @@
+{% extends 'core/dashboard_base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <a href="{% url 'academics:exam_list' %}?classroom={{ exam.classroom.pk }}" class="text-decoration-none text-muted">
+            <i class="bi bi-arrow-left"></i> Back to Exams
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-1">{{ exam.name }} Result</h2>
+            <p class="text-muted">{{ exam.classroom }} - {{ exam.date|date:"d M Y" }}</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <button onclick="window.print()" class="btn btn-outline-primary">
+                <i class="bi bi-printer me-2"></i>Print Result Sheet
+            </button>
+        </div>
+    </div>
+
+    <!-- Toppers Section -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 text-success"><i class="bi bi-trophy me-2"></i>Top Performers</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for topper in toppers %}
+                <div class="col-md-2 mb-3 text-center">
+                    <div class="position-relative d-inline-block mb-2">
+                         <div style="width:60px; height:60px; background:#f0f0f0; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center;">
+                            <span class="fs-4 fw-bold text-primary">{{ topper.rank }}</span>
+                        </div>
+                    </div>
+                    <h6 class="mb-0 text-truncate" title="{{ topper.student.user.get_full_name }}">{{ topper.student.user.get_full_name }}</h6>
+                    <small class="text-muted">{{ topper.percentage|floatformat:1 }}%</small>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center text-muted">No results available yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Rank List -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Class Rank List</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Rank</th>
+                            <th>Admission No</th>
+                            <th>Student Name</th>
+                            <th class="text-center">Total Marks</th>
+                            <th class="text-center">Max Marks</th>
+                            <th class="text-center">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in student_results %}
+                        <tr {% if item.rank <= 5 %}class="table-success"{% endif %}>
+                            <td class="ps-4 fw-bold">#{{ item.rank }}</td>
+                            <td>{{ item.student.admission_number }}</td>
+                            <td>{{ item.student.user.get_full_name }}</td>
+                            <td class="text-center fw-bold">{{ item.total_marks }}</td>
+                            <td class="text-center text-muted">{{ item.max_marks }}</td>
+                            <td class="text-center">
+                                <span class="badge {% if item.percentage >= 90 %}bg-success{% elif item.percentage >= 40 %}bg-primary{% else %}bg-danger{% endif %}">
+                                    {{ item.percentage|floatformat:2 }}%
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-file-earmark-spreadsheet display-4 mb-3 d-block"></i>
+                                No result data found. Please ensure absolute marks are entered.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

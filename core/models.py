@@ -145,3 +145,50 @@ class JobApplication(models.Model):
 
     def __str__(self) -> str:
         return f"{self.full_name} - {self.job.title}"
+
+
+class CharityApplication(models.Model):
+    """Application for charity or financial aid."""
+
+    CATEGORY_PALLIATIVE = 'PALLIATIVE'
+    CATEGORY_MARRIAGE = 'MARRIAGE'
+    CATEGORY_MEDICAL = 'MEDICAL'
+    CATEGORY_EDUCATION = 'EDUCATION'
+    CATEGORY_WIDOW = 'WIDOW'
+    CATEGORY_OTHER = 'OTHER'
+
+    CATEGORY_CHOICES = [
+        (CATEGORY_PALLIATIVE, 'Palliative Care (സാന്ത്വനം)'),
+        (CATEGORY_MARRIAGE, 'Marriage Aid (വിവാഹസഹായ നിധി)'),
+        (CATEGORY_MEDICAL, 'Medical Aid (ചികിത്സാ സഹായം)'),
+        (CATEGORY_EDUCATION, 'Educational Scholarship (സ്കോളർഷിപ്പ്)'),
+        (CATEGORY_WIDOW, 'Widow Support (അതിജീവിതം)'),
+        (CATEGORY_OTHER, 'Other / General'),
+    ]
+
+    STATUS_PENDING = 'PENDING'
+    STATUS_APPROVED = 'APPROVED'
+    STATUS_REJECTED = 'REJECTED'
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, 'Pending Review'),
+        (STATUS_APPROVED, 'Approved'),
+        (STATUS_REJECTED, 'Rejected'),
+    ]
+
+    full_name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20, help_text=_("Contact number for verification."))
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    description = models.TextField(help_text=_("Describe your situation and requirement."))
+    document = models.FileField(upload_to='charity_docs/', blank=True, null=True, help_text=_("Upload supporting documents (medical reports, etc.)"))
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True, help_text=_("Internal notes by committee."))
+
+    class Meta:
+        ordering = ["-submitted_at"]
+        verbose_name = _("Charity Application")
+        verbose_name_plural = _("Charity Applications")
+
+    def __str__(self) -> str:
+        return f"{self.full_name} - {self.get_category_display()}"

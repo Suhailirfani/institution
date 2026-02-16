@@ -1,5 +1,6 @@
 from django import forms
-from .models import AcademicYear, Institution, JobApplication
+from .models import AcademicYear, Institution, JobApplication, CharityApplication
+
 
 class AcademicYearForm(forms.ModelForm):
     class Meta:
@@ -27,4 +28,13 @@ class JobApplicationForm(forms.ModelForm):
         widgets = {
             'cover_letter': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Tell us why you are a good fit...'}),
             'resume': forms.FileInput(attrs={'accept': '.pdf,.doc,.docx'}),
+        }
+
+
+class CharityApplicationForm(forms.ModelForm):
+    class Meta:
+        model = CharityApplication
+        fields = ['full_name', 'phone', 'category', 'description', 'document']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
         }

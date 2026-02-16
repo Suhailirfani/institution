@@ -42,6 +42,8 @@ class Subject(models.Model):
     )
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=50)
+    max_marks = models.DecimalField(max_digits=5, decimal_places=2, default=100.00)
+    pass_marks = models.DecimalField(max_digits=5, decimal_places=2, default=40.00)
 
     class Meta:
         unique_together = ("classroom", "code")

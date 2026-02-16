@@ -18,6 +18,8 @@ urlpatterns = [
     path("programmes/add/", views.ProgrammeCreateView.as_view(), name="programme_create"),
     path("programmes/<int:pk>/edit/", views.ProgrammeUpdateView.as_view(), name="programme_update"),
     path("programmes/<int:pk>/delete/", views.ProgrammeDeleteView.as_view(), name="programme_delete"),
+    
+    path("applications/<int:pk>/letter/", views.AdmissionLetterView.as_view(), name="admission_letter"),
 ]
 
 

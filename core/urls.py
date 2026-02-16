@@ -13,6 +13,8 @@ urlpatterns = [
     path("institutions/<int:pk>/", views.InstitutionDetailView.as_view(), name="institution_detail"),
     path("admissions/", views.AdmissionsInfoView.as_view(), name="admissions_info"),
     path("charity/", views.CharityWingView.as_view(), name="charity"),
+    path("charity/apply/", views.CharityApplicationCreateView.as_view(), name="charity_apply"),
+    path("charity/success/", views.CharityApplicationSuccessView.as_view(), name="charity_success"),
     path("career/", views.CareerView.as_view(), name="career"),
     path("contact/", views.ContactView.as_view(), name="contact"),
 

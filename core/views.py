@@ -9,8 +9,8 @@ from admissions.models import AdmissionApplication
 from academics.models import StudentProfile, StaffProfile
 from payments.models import Payment
 from sponsorship.models import SponsorshipAllocation
-from .models import NewsItem, JobOpening, AcademicYear, Institution, JobApplication
-from .forms import AcademicYearForm, InstitutionForm, JobApplicationForm
+from .models import NewsItem, JobOpening, AcademicYear, Institution, JobApplication, CharityApplication
+from .forms import AcademicYearForm, InstitutionForm, JobApplicationForm, CharityApplicationForm
 
 
 class HomeView(TemplateView):
@@ -43,6 +43,20 @@ class InstitutionDetailView(DetailView):
 
     def get_queryset(self):
         return Institution.objects.filter(is_active=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Fetch classrooms for the active academic year
+        from academics.models import ClassRoom
+        active_year = AcademicYear.objects.filter(is_active=True).first()
+        if active_year:
+            context['classrooms'] = ClassRoom.objects.filter(
+                institution=self.object,
+                academic_year=active_year
+            ).order_by('standard', 'division')
+        else:
+            context['classrooms'] = []
+        return context
 
 
 class AdmissionsInfoView(TemplateView):
@@ -330,3 +344,19 @@ class UpdateHistoryView(RoleRequiredMixin, TemplateView):
             
         context['page_title'] = "Update History"
         return context
+
+
+class CharityApplicationCreateView(CreateView):
+    model = CharityApplication
+    form_class = CharityApplicationForm
+    template_name = "core/charity_application_form.html"
+    success_url = reverse_lazy('core:charity_success')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = "Apply for Charity Aid"
+        return context
+
+
+class CharityApplicationSuccessView(TemplateView):
+    template_name = "core/charity_application_success.html"

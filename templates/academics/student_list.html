@@ -10,6 +10,9 @@
             <a href="{% url 'academics:student_import' %}" class="btn btn-outline-primary me-2">
                 <i class="bi bi-file-earmark-spreadsheet"></i> Import Excel
             </a>
+            <a href="{% url 'academics:student_id_card_bulk' %}" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-person-badge"></i> Bulk ID Cards
+            </a>
             <a href="{% url 'academics:student_create' %}" class="btn btn-primary">
                 <i class="bi bi-plus-lg"></i> Add New Student
             </a>
@@ -40,6 +43,10 @@
                                 <a href="https://wa.me/{{ student.whatsapp_number }}" target="_blank"
                                     class="btn btn-sm btn-outline-success" title="Message on WhatsApp">
                                     <i class="bi bi-whatsapp"></i>
+                                </a>
+                                <a href="{% url 'academics:student_id_card' student.pk %}" target="_blank"
+                                    class="btn btn-sm btn-outline-success" title="Download ID Card">
+                                    <i class="bi bi-person-badge"></i>
                                 </a>
                                 {% endif %}
                                 <a href="{% url 'academics:student_certificate' student.pk %}" target="_blank"

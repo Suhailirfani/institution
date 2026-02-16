@@ -42,5 +42,9 @@ urlpatterns = [
     path("api/v1/committee/", include("committee.api_urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# Force reload for Admission Letter URL
+

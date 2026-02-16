@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Application Submitted – Adabiyya{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                    </div>
+                    <h2 class="mb-3">Application Received</h2>
+                    <p class="lead text-muted mb-4">
+                        Thank you for reaching out to Adabiyya Charity Wing. 
+                        Your application has been successfully submitted.
+                    </p>
+                    <p class="mb-4">
+                        Our committee will review your request and verify the details. 
+                        We will contact you on the provided phone number regarding further steps.
+                    </p>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-center">
+                        <a href="{% url 'core:home' %}" class="btn btn-primary px-4">Return to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
