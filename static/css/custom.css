@@ -2013,34 +2013,248 @@ body.landing-page .landing-bokeh {
   z-index: -1;
 }
 
+  z-index: 0;
+}
+
+body.landing-page::before {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle at center, rgba(255,200,220,0.35) 0%, rgba(255,180,210,0.08) 60%, transparent 100%);
+  top: 5%;
+  left: -8%;
+  animation: bokehFloat1 14s ease-in-out infinite;
+}
+
+body.landing-page::after {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle at center, rgba(255,200,220,0.3) 0%, rgba(255,180,210,0.06) 65%, transparent 100%);
+  top: 30%;
+  right: -5%;
+  animation: bokehFloat2 18s ease-in-out infinite;
+}
+
+/* Extra bokeh bubbles injected via a helper div */
+.landing-bokeh {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.landing-bokeh span {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255,200,220,0.3) 0%, rgba(255,180,210,0.06) 55%, transparent 100%);
+  animation: bokehFloat1 linear infinite;
+}
+
+.landing-bokeh span:nth-child(1) { width: 280px; height: 280px; top: 10%;  left: 15%;  animation-duration: 16s; }
+.landing-bokeh span:nth-child(2) { width: 200px; height: 200px; top: 55%;  left: 5%;   animation-duration: 20s; animation-delay: -4s; }
+.landing-bokeh span:nth-child(3) { width: 350px; height: 350px; top: 60%;  left: 40%;  animation-duration: 22s; animation-delay: -8s; }
+.landing-bokeh span:nth-child(4) { width: 180px; height: 180px; top: 15%;  right: 20%; animation-duration: 17s; animation-delay: -2s; }
+.landing-bokeh span:nth-child(5) { width: 240px; height: 240px; bottom: 5%; right: 10%; animation-duration: 19s; animation-delay: -6s; }
+
+/* Glowing centre spot */
+.landing-bokeh span:nth-child(3) {
+  background: radial-gradient(circle at 40% 40%, rgba(255,200,220,0.45) 0%, rgba(255,180,210,0.12) 40%, transparent 70%);
+}
+
+@keyframes bokehFloat1 {
+  0%   { transform: translateY(0)   scale(1); }
+  50%  { transform: translateY(-28px) scale(1.05); }
+  100% { transform: translateY(0)   scale(1); }
+}
+
+@keyframes bokehFloat2 {
+  0%   { transform: translateY(0)   scale(1); }
+  50%  { transform: translateY(22px) scale(0.97); }
+  100% { transform: translateY(0)   scale(1); }
+}
+
+/* Ensure content sits above the bokeh layer */
+body.landing-page > nav,
+body.landing-page > main,
+body.landing-page > footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Light section overrides on landing page */
+body.landing-page .bg-light-custom {
+  background: rgba(255, 255, 255, 0.35) !important;
+  backdrop-filter: blur(8px);
+}
+
+body.landing-page .card {
+  background: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.5) !important;
+}
+
+@keyframes newsTickerSweep {
+  0% { left: -100%; opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { left: 200%; opacity: 0; }
+}
+
+@keyframes sparklePulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0px #c4527a); }
+  50% { transform: scale(1.4); filter: drop-shadow(0 0 8px rgba(196, 82, 122, 0.9)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0px #c4527a); }
+}
+
+@keyframes tickerBorderGlow {
+  0% { border-bottom-color: rgba(107, 15, 58, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+  50% { border-bottom-color: rgba(196, 82, 122, 0.4); box-shadow: 0 4px 20px rgba(196, 82, 122, 0.15); }
+  100% { border-bottom-color: rgba(107, 15, 58, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+}
+
+.news-ticker-bar {
+  background: linear-gradient(-45deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
+  background-size: 400% 400%;
+  animation: tickerBgAnimate 15s ease infinite, tickerBorderGlow 4s infinite ease-in-out;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.2rem 0;
+  border-bottom: 2px solid rgba(107, 15, 58, 0.1);
+  position: relative;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.news-ticker-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 25rem;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0) 80%,
+    transparent 100%
+  );
+  transform: skewX(-30deg);
+  animation: newsTickerSweep 5s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.news-ticker-label {
+  background: rgba(255, 255, 255, 0.18);
+  color: #6b0f3a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0.25rem 0.85rem;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: 1px solid rgba(107, 15, 58, 0.25);
+  backdrop-filter: blur(4px);
+}
+
+.news-ticker-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(107, 15, 58, 0.25);
+  margin: 0 0.85rem;
+  flex-shrink: 0;
+}
+
+.news-ticker-marquee {
+  color: #5c0a32;
+  font-size: 1.0rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  line-height: 1.8;
+}
+
+.news-ticker-item {
+  margin-right: 3.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #7a1040;
+}
+
+.news-ticker-item .bi-sparkles {
+  color: #c4527a;
+  font-size: 0.78rem;
+  animation: sparklePulse 2.5s infinite ease-in-out;
+  display: inline-block;
+}
+
+/* ===== Fix: Dropdown visibility on landing page ===== */
+body.landing-page .navbar {
+  z-index: 1100 !important;
+}
+
+body.landing-page .navbar .dropdown-menu {
+  z-index: 1101 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Keep bokeh strictly below navbar */
+body.landing-page .landing-bokeh {
+  z-index: -1;
+}
+
 body.landing-page::before,
 body.landing-page::after {
   z-index: -1;
 }
 
-/* ===== Floating Instagram Button ===== */
-.floating-instagram {
+/* ===== Floating Action Buttons ===== */
+.floating-buttons-container {
   position: fixed;
   bottom: 20px;
   right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 1000;
+}
+
+.floating-btn {
   width: 55px;
   height: 55px;
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  color: white;
   border-radius: 50%;
   text-align: center;
   font-size: 28px;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-decoration: none;
+  color: white !important;
+}
+
+.floating-btn:hover {
+  transform: scale(1.1);
+}
+
+.floating-whatsapp {
+  background-color: #25d366; /* WhatsApp Green */
+}
+
+.floating-whatsapp:hover {
+  box-shadow: 2px 2px 15px rgba(37, 211, 102, 0.5);
+}
+
+.floating-instagram {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
 }
 
 .floating-instagram:hover {
-  transform: scale(1.1);
   box-shadow: 2px 2px 15px rgba(220, 39, 67, 0.5);
-  color: white;
 }
