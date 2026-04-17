@@ -1,0 +1,100 @@
+{% extends 'core/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="row">
+    <!-- Application Details -->
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Application Details</h6>
+                <span class="badge {% if application.status == 'APPROVED' %}bg-success{% elif application.status == 'REJECTED' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                    {{ application.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="small text-muted text-uppercase fw-bold">Applicant Name</label>
+                        <h5 class="fw-bold">{{ application.full_name }}</h5>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small text-muted text-uppercase fw-bold">Submission Date</label>
+                        <p class="mb-0">{{ application.submitted_at|date:"F d, Y H:i" }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="small text-muted text-uppercase fw-bold">Create Category</label>
+                        <p class="mb-0 fw-semibold text-primary">{{ application.get_category_display }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small text-muted text-uppercase fw-bold">Contact Number</label>
+                        <p class="mb-0 font-monospace">{{ application.phone }}</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="small text-muted text-uppercase fw-bold">Description / Request</label>
+                    <div class="p-3 bg-light rounded border">
+                        {{ application.description|linebreaks }}
+                    </div>
+                </div>
+
+                {% if application.document %}
+                <div class="mb-4">
+                    <label class="small text-muted text-uppercase fw-bold">Supporting Documents</label>
+                    <div class="d-flex align-items-center p-3 border rounded bg-white">
+                        <i class="bi bi-file-earmark-text fs-3 text-secondary me-3"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0 text-truncate">Document Attachment</h6>
+                            <small class="text-muted">Click open to view or download.</small>
+                        </div>
+                        <a href="{{ application.document.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>Open
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if application.notes %}
+                <div class="mb-4">
+                    <label class="small text-muted text-uppercase fw-bold">Committee Notes</label>
+                    <div class="alert alert-info border-0">
+                        <i class="bi bi-info-circle me-2"></i> {{ application.notes|linebreaksbr }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Sidebar -->
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Actions</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-3">
+                    Review the application details and supporting documents before taking action.
+                </p>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'core:charity_application_update' application.pk %}" class="btn btn-primary">
+                        <i class="bi bi-pencil-square me-2"></i>Update Status / Add Notes
+                    </a>
+                    
+                    <a href="tel:{{ application.phone }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-telephone me-2"></i>Call Applicant
+                    </a>
+
+                    <a href="{% url 'core:charity_application_list' %}" class="btn btn-light text-muted mt-2">
+                        <i class="bi bi-arrow-left me-2"></i>Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

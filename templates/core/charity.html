@@ -8,20 +8,180 @@
   <h1 class="mb-4"><i class="bi bi-heart me-2"></i>Charity & Sponsorship Wing</h1>
   <div class="row">
     <div class="col-lg-8 mx-auto">
-      <div class="card">
-        <div class="card-header bg-success text-white">
-          <h3 class="mb-0">Supporting Education Through Sponsorship</h3>
+      <!-- Charity Initiatives Cards -->
+      <div class="row g-4 mb-5">
+        <!-- Palliative Care -->
+        <div class="col-md-6">
+          <div class="card card-curved h-100 bg-palliative bg-opacity-10 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="charity-icon-box bg-palliative text-white shadow-sm mb-4">
+                <i class="bi bi-heart-pulse-fill"></i>
+              </div>
+              <h5 class="fw-bold font-malayalam-heading mb-2">സാന്ത്വനം</h5>
+              <h6 class="text-secondary text-uppercase small letter-spacing-1 mb-3">Palliative Care</h6>
+              <p class="small text-muted mb-4 font-malayalam-body">
+                കിടപ്പിലായ രോഗികൾക്ക് സാന്ത്വനമേകാനും അവർക്ക് ആവശ്യമായ മെഡിക്കൽ സഹായങ്ങൾ എത്തിക്കാനും അദബിയ്യ എന്നും മുന്നിലുണ്ട്.
+              </p>
+              <div class="mt-auto d-grid gap-2">
+                  <a href="{% url 'core:charity_apply' %}" class="btn btn-primary rounded-pill btn-sm px-3 shadow-sm">
+                      Apply for Aid <i class="bi bi-file-earmark-text ms-1"></i>
+                  </a>
+                  <a href="#donate" class="btn btn-outline-dark rounded-pill btn-sm px-3 shadow-sm font-malayalam-body">
+                      സഹായിക്കാൻ താല്പര്യമുള്ളവർക്ക് <i class="bi bi-heart-fill ms-1 text-danger"></i>
+                  </a>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
+  
+        <!-- Marriage Aid -->
+        <div class="col-md-6">
+          <div class="card card-curved h-100 bg-marriage bg-opacity-10 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="charity-icon-box bg-marriage text-white shadow-sm mb-4">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <h5 class="fw-bold font-malayalam-heading mb-2">വിവാഹസഹായ നിധി</h5>
+              <h6 class="text-secondary text-uppercase small letter-spacing-1 mb-3">Marriage Aid</h6>
+              <p class="small text-muted mb-4 font-malayalam-body">
+                സാമ്പത്തിക ബുദ്ധിമുട്ട് മൂലം പ്രയാസപ്പെടുന്ന കുടുംബങ്ങളിലെ പെൺമക്കളുടെ വിവാഹം ലളിതമായും അന്തസ്സോടെയും നടത്താൻ നാം സഹായിക്കുന്നു.
+              </p>
+              <div class="mt-auto d-grid gap-2">
+                  <a href="{% url 'core:charity_apply' %}" class="btn btn-danger rounded-pill btn-sm px-3 shadow-sm">
+                      Apply for Aid <i class="bi bi-file-earmark-text ms-1"></i>
+                  </a>
+                  <a href="#donate" class="btn btn-outline-dark rounded-pill btn-sm px-3 shadow-sm font-malayalam-body">
+                      സഹായിക്കാൻ താല്പര്യമുള്ളവർക്ക് <i class="bi bi-heart-fill ms-1 text-danger"></i>
+                  </a>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Medical Aid -->
+        <div class="col-md-6">
+          <div class="card card-curved h-100 bg-medical bg-opacity-10 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="charity-icon-box bg-medical text-white shadow-sm mb-4">
+                <i class="bi bi-hospital-fill"></i>
+              </div>
+              <h5 class="fw-bold font-malayalam-heading mb-2">ചികിത്സാ സഹായം</h5>
+              <h6 class="text-secondary text-uppercase small letter-spacing-1 mb-3">Medical Aid</h6>
+              <p class="small text-muted mb-4 font-malayalam-body">
+                നിർധനരായ രോഗികൾക്ക് മെച്ചപ്പെട്ട ചികിത്സ ഉറപ്പാക്കാൻ അദബിയ്യയുടെ പ്രത്യേക മെഡിക്കൽ ഫണ്ട് വിനിയോഗിക്കുന്നു.
+              </p>
+              <div class="mt-auto d-grid gap-2">
+                  <a href="{% url 'core:charity_apply' %}" class="btn btn-danger rounded-pill btn-sm px-3 shadow-sm">
+                      Apply for Aid <i class="bi bi-file-earmark-text ms-1"></i>
+                  </a>
+                  <a href="#donate" class="btn btn-outline-dark rounded-pill btn-sm px-3 shadow-sm font-malayalam-body">
+                      സഹായിക്കാൻ താല്പര്യമുള്ളവർക്ക് <i class="bi bi-heart-fill ms-1 text-danger"></i>
+                  </a>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Educational Scholarship -->
+        <div class="col-md-6">
+          <div class="card card-curved h-100 bg-education bg-opacity-10 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <div class="charity-icon-box bg-education text-white shadow-sm mb-4">
+                <i class="bi bi-mortarboard-fill"></i>
+              </div>
+              <h5 class="fw-bold font-malayalam-heading mb-2">വിദ്യഭ്യാസ സഹായം</h5>
+              <h6 class="text-secondary text-uppercase small letter-spacing-1 mb-3">Scholarship</h6>
+              <p class="small text-muted mb-4 font-malayalam-body">
+                സാമ്പത്തിക പരാധീനതകൾ ഒരു കുട്ടിയുടെയും പഠനത്തിന് തടസ്സമാകരുത്. അദബിയ്യ സ്കോളർഷിപ്പിലൂടെ അറിവിന്റെ പുതിയ ലോകം അവർക്കായി തുറക്കുന്നു.
+              </p>
+              <div class="mt-auto d-grid gap-2">
+                  <a href="{% url 'core:charity_apply' %}" class="btn btn-success rounded-pill btn-sm px-3 shadow-sm">
+                      Apply for Aid <i class="bi bi-file-earmark-text ms-1"></i>
+                  </a>
+                  <a href="#donate" class="btn btn-outline-dark rounded-pill btn-sm px-3 shadow-sm font-malayalam-body">
+                      സഹായിക്കാൻ താല്പര്യമുള്ളവർക്ക് <i class="bi bi-heart-fill ms-1 text-danger"></i>
+                  </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Sponsorship Card -->
+      <div class="card mb-5 shadow-sm border-0">
+        <div class="card-header bg-success text-white py-3">
+          <h4 class="mb-0"><i class="bi bi-mortarboard-fill me-2"></i>Educational Sponsorship</h4>
+        </div>
+        <div class="card-body p-4">
           <p class="lead">Help deserving students achieve their educational dreams.</p>
           <p>Our sponsorship program connects generous donors with students in need, ensuring that financial constraints don't hinder educational opportunities.</p>
           <div class="mt-4">
-            <a href="#" class="btn btn-success btn-lg">
-              <i class="bi bi-heart-fill me-2"></i>Become a Sponsor
+            <a href="{% url 'core:contact' %}" class="btn btn-outline-success">
+              <i class="bi bi-envelope me-2"></i>Contact Us to Sponsor
             </a>
           </div>
         </div>
       </div>
+
+      <!-- Donation Details Section -->
+      <div id="donate" class="card shadow-custom border-0">
+        <div class="card-header bg-primary text-white py-3">
+            <h4 class="mb-0"><i class="bi bi-heart-fill me-2"></i>Donate to Charity Wing</h4>
+        </div>
+        <div class="card-body p-4">
+            <div class="text-center mb-4">
+                <h5 class="fw-bold">Your contribution can change a life.</h5>
+                <p class="text-muted">Support our initiatives in Palliative Care, Medical Aid, Marriage Assistance, and Widow Support.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="p-3 bg-light rounded border h-100">
+                        <h6 class="fw-bold text-uppercase text-primary mb-3">Bank Transfer Details</h6>
+                        <dl class="row mb-0 small">
+                            <dt class="col-sm-4">Account Name</dt>
+                            <dd class="col-sm-8 fw-bold">Adabiyya Modern Academy</dd>
+
+                            <dt class="col-sm-4">Bank</dt>
+                            <dd class="col-sm-8">State Bank of India</dd>
+
+                            <dt class="col-sm-4">Account No</dt>
+                            <dd class="col-sm-8 font-monospace user-select-all">000000000000</dd>
+
+                            <dt class="col-sm-4">IFSC Code</dt>
+                            <dd class="col-sm-8 font-monospace user-select-all">SBIN0000000</dd>
+                            
+                            <dt class="col-sm-4">Branch</dt>
+                            <dd class="col-sm-8">Perinthalmanna</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 bg-light rounded border h-100 text-center">
+                        <h6 class="fw-bold text-uppercase text-primary mb-3">UPI / QR Code</h6>
+                        <div class="ratio ratio-1x1 mx-auto bg-white border" style="max-width: 150px;">
+                            <div class="d-flex align-items-center justify-content-center text-muted">
+                                <i class="bi bi-qr-code-scan fs-1"></i>
+                                <!-- <img src="{% static 'img/upi_qr.png' %}" alt="UPI QR" class="img-fluid"> -->
+                            </div>
+                        </div>
+                        <p class="small text-muted mt-2">Scan to Donate via GPay / PhonePe</p>
+                        <p class="fw-bold font-monospace small">adabiyya@upi</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+                <p class="mb-2">For donation receipts or queries, please contact:</p>
+                <a href="tel:+919961862603" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                    <i class="bi bi-telephone-fill me-1"></i> +91 99618 62603
+                </a>
+            </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

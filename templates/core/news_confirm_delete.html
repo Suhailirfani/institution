@@ -1,0 +1,29 @@
+{% extends "core/dashboard_base.html" %}
+
+{% block dashboard_title %}Delete News{% endblock %}
+
+{% block dashboard_content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="card shadow border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete</h5>
+            </div>
+            <div class="card-body p-4">
+                <p class="mb-1">Are you sure you want to delete the news item:</p>
+                <p class="fw-bold fs-5 text-danger">"{{ object.title }}"</p>
+                <p class="text-muted small">This action cannot be undone. The item will be removed from the homepage ticker immediately.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-1"></i>Yes, Delete
+                        </button>
+                        <a href="{% url 'core:news_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

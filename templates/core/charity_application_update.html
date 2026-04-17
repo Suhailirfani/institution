@@ -1,0 +1,7 @@
+{% extends 'core/generic_form.html' %}
+
+{% block dashboard_content %}
+    {% with page_title="Update Application Status" back_url=request.META.HTTP_REFERER %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock %}

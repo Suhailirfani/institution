@@ -65,3 +65,43 @@ class Payment(models.Model):
 
     def __str__(self) -> str:
         return f"{self.get_category_display()} - {self.amount} {self.currency} ({self.status})"
+
+class Donation(models.Model):
+    """Represents a direct donation via Razorpay."""
+
+    class Category(models.TextChoices):
+        ZAKAT = "ZAKAT", _("Zakat")
+        SADAQAH = "SADAQAH", _("Sadaqah")
+        GENERAL = "GENERAL", _("General Fund")
+        EDUCATION = "EDUCATION", _("Education Fund")
+
+    class Status(models.TextChoices):
+        PENDING = "PENDING", _("Pending")
+        SUCCESS = "SUCCESS", _("Success")
+        FAILED = "FAILED", _("Failed")
+
+    donor_name = models.CharField(max_length=255)
+    donor_email = models.EmailField(blank=True)
+    donor_phone = models.CharField(max_length=20, blank=True)
+    category = models.CharField(max_length=20, choices=Category.choices, default=Category.GENERAL)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=10, default="INR")
+
+    # Razorpay-specific fields
+    razorpay_order_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
+    razorpay_payment_id = models.CharField(max_length=255, blank=True)
+    razorpay_signature = models.CharField(max_length=255, blank=True)
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return f"{self.donor_name} - {self.amount} {self.currency} ({self.status})"

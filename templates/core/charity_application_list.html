@@ -1,0 +1,94 @@
+{% extends 'core/dashboard_base.html' %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Charity Applications</h1>
+    <div class="btn-group">
+        <a href="?status=" class="btn btn-outline-secondary {% if not request.GET.status %}active{% endif %}">All</a>
+        <a href="?status=PENDING" class="btn btn-outline-warning {% if request.GET.status == 'PENDING' %}active{% endif %}">Pending</a>
+        <a href="?status=APPROVED" class="btn btn-outline-success {% if request.GET.status == 'APPROVED' %}active{% endif %}">Approved</a>
+        <a href="?status=REJECTED" class="btn btn-outline-danger {% if request.GET.status == 'REJECTED' %}active{% endif %}">Rejected</a>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Applications List</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Applicant Name</th>
+                        <th>Category</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>{{ app.submitted_at|date:"M d, Y" }}</td>
+                        <td class="fw-bold">{{ app.full_name }}</td>
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ app.get_category_display }}</span>
+                        </td>
+                        <td>{{ app.phone }}</td>
+                        <td>
+                            {% if app.status == 'PENDING' %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif app.status == 'APPROVED' %}
+                                <span class="badge bg-success">Approved</span>
+                            {% elif app.status == 'REJECTED' %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'core:charity_application_detail' app.pk %}" class="btn btn-sm btn-info btn-icon-split shadow-sm">
+                                <span class="icon text-white-50">
+                                    <i class="bi bi-eye"></i>
+                                </span>
+                                <span class="text">View</span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                            No applications found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">Previous</a>
+                </li>
+                {% endif %}
+                
+                <li class="page-item disabled">
+                    <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </li>
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

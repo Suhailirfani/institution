@@ -1,5 +1,5 @@
 from django import forms
-from .models import AcademicYear, Institution, JobApplication, CharityApplication
+from .models import AcademicYear, Institution, JobApplication, CharityApplication, NewsItem
 
 
 class AcademicYearForm(forms.ModelForm):
@@ -37,4 +37,15 @@ class CharityApplicationForm(forms.ModelForm):
         fields = ['full_name', 'phone', 'category', 'description', 'document']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
+        }
+
+
+class NewsItemForm(forms.ModelForm):
+    class Meta:
+        model = NewsItem
+        fields = ['title', 'content', 'is_active']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'News headline...'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Optional longer description or detail...'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

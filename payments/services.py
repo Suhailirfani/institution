@@ -13,6 +13,22 @@ def get_razorpay_client() -> razorpay.Client:
         auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
     )
 
+def create_donation_razorpay_order(donation: 'Donation') -> dict[str, Any]:
+    """Create a Razorpay order for a Donation instance."""
+    client = get_razorpay_client()
+    amount_paise = int(Decimal(donation.amount) * 100)
+    order = client.order.create(
+        {
+            "amount": amount_paise,
+            "currency": donation.currency,
+            "receipt": f"don_{donation.pk}",
+            "payment_capture": 1,
+        }
+    )
+    donation.razorpay_order_id = order.get("id", "")
+    donation.save(update_fields=["razorpay_order_id"])
+    return order
+
 
 def create_razorpay_order(payment: Payment) -> dict[str, Any]:
     """Create a Razorpay order for a Payment instance (amount in paise)."""

@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse_lazy
 from django.contrib import messages
-from django.views.generic import RedirectView, TemplateView, ListView, DetailView, CreateView, UpdateView
+from django.views.generic import RedirectView, TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from accounts.models import User
 from accounts.permissions import RoleRequiredMixin
@@ -10,7 +10,7 @@ from academics.models import StudentProfile, StaffProfile
 from payments.models import Payment
 from sponsorship.models import SponsorshipAllocation
 from .models import NewsItem, JobOpening, AcademicYear, Institution, JobApplication, CharityApplication
-from .forms import AcademicYearForm, InstitutionForm, JobApplicationForm, CharityApplicationForm
+from .forms import AcademicYearForm, InstitutionForm, JobApplicationForm, CharityApplicationForm, NewsItemForm
 
 
 class HomeView(TemplateView):
@@ -243,6 +243,62 @@ class InstitutionUpdateView(RoleRequiredMixin, UpdateView):
         return context
 
 
+# --- Latest News Management ---
+class NewsItemListView(RoleRequiredMixin, ListView):
+    model = NewsItem
+    template_name = "core/news_list.html"
+    context_object_name = 'news_items'
+    allowed_roles = [User.Roles.ADMIN]
+    ordering = ['-created_at']
+
+
+class NewsItemCreateView(RoleRequiredMixin, CreateView):
+    model = NewsItem
+    form_class = NewsItemForm
+    template_name = "core/news_form.html"
+    success_url = reverse_lazy('core:news_list')
+    allowed_roles = [User.Roles.ADMIN]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = "Add News"
+        context['form_action'] = "Add"
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "News item added successfully.")
+        return super().form_valid(form)
+
+
+class NewsItemUpdateView(RoleRequiredMixin, UpdateView):
+    model = NewsItem
+    form_class = NewsItemForm
+    template_name = "core/news_form.html"
+    success_url = reverse_lazy('core:news_list')
+    allowed_roles = [User.Roles.ADMIN]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = "Edit News"
+        context['form_action'] = "Save Changes"
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "News item updated successfully.")
+        return super().form_valid(form)
+
+
+class NewsItemDeleteView(RoleRequiredMixin, DeleteView):
+    model = NewsItem
+    template_name = "core/news_confirm_delete.html"
+    success_url = reverse_lazy('core:news_list')
+    allowed_roles = [User.Roles.ADMIN]
+
+    def form_valid(self, form):
+        messages.success(self.request, "News item deleted.")
+        return super().form_valid(form)
+
+
 # --- Job Application Management ---
 class JobApplicationCreateView(CreateView):
     model = JobApplication
@@ -283,6 +339,54 @@ class JobApplicationUpdateView(RoleRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         messages.success(self.request, f"Application status updated to {self.object.get_status_display()}.")
+        return super().form_valid(form)
+
+
+# ── News Management ────────────────────────────────────────────────────────────
+
+class NewsItemListView(RoleRequiredMixin, ListView):
+    model = NewsItem
+    template_name = "core/news_list.html"
+    context_object_name = "news_items"
+    allowed_roles = [User.Roles.ADMIN]
+    ordering = ["-created_at"]
+    paginate_by = 20
+
+
+class NewsItemCreateView(RoleRequiredMixin, CreateView):
+    model = NewsItem
+    form_class = NewsItemForm
+    template_name = "core/news_form.html"
+    allowed_roles = [User.Roles.ADMIN]
+    success_url = reverse_lazy("core:news_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "News item created successfully.")
+        return super().form_valid(form)
+
+
+class NewsItemUpdateView(RoleRequiredMixin, UpdateView):
+    model = NewsItem
+    form_class = NewsItemForm
+    template_name = "core/news_form.html"
+    context_object_name = "news_item"
+    allowed_roles = [User.Roles.ADMIN]
+    success_url = reverse_lazy("core:news_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "News item updated successfully.")
+        return super().form_valid(form)
+
+
+class NewsItemDeleteView(RoleRequiredMixin, DeleteView):
+    model = NewsItem
+    template_name = "core/news_confirm_delete.html"
+    context_object_name = "news_item"
+    allowed_roles = [User.Roles.ADMIN]
+    success_url = reverse_lazy("core:news_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "News item deleted.")
         return super().form_valid(form)
 
 
@@ -360,3 +464,41 @@ class CharityApplicationCreateView(CreateView):
 
 class CharityApplicationSuccessView(TemplateView):
     template_name = "core/charity_application_success.html"
+
+
+class CharityApplicationListView(RoleRequiredMixin, ListView):
+    model = CharityApplication
+    template_name = "core/charity_application_list.html"
+    context_object_name = 'applications'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.COMMITTEE]
+    ordering = ['-submitted_at']
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        status = self.request.GET.get('status')
+        if status:
+            queryset = queryset.filter(status=status)
+        return queryset
+
+
+class CharityApplicationDetailView(RoleRequiredMixin, DetailView):
+    model = CharityApplication
+    template_name = "core/charity_application_detail.html"
+    context_object_name = 'application'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.COMMITTEE]
+
+
+class CharityApplicationUpdateView(RoleRequiredMixin, UpdateView):
+    model = CharityApplication
+    fields = ['status', 'notes']
+    template_name = "core/charity_application_update.html"
+    context_object_name = 'application'
+    allowed_roles = [User.Roles.ADMIN, User.Roles.COMMITTEE]
+
+    def get_success_url(self):
+        return reverse_lazy('core:charity_application_detail', kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        messages.success(self.request, f"Application status updated to {self.object.get_status_display()}.")
+        return super().form_valid(form)

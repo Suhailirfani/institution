@@ -44,6 +44,17 @@ urlpatterns = [
     
     # Update History
     path("updates/", views.UpdateHistoryView.as_view(), name="update_history"),
+
+    # Charity Application Management
+    path("dashboard/charity/applications/", views.CharityApplicationListView.as_view(), name="charity_application_list"),
+    path("dashboard/charity/applications/<int:pk>/", views.CharityApplicationDetailView.as_view(), name="charity_application_detail"),
+    path("dashboard/charity/applications/<int:pk>/update/", views.CharityApplicationUpdateView.as_view(), name="charity_application_update"),
+
+    # Latest News Management
+    path("dashboard/admin/news/", views.NewsItemListView.as_view(), name="news_list"),
+    path("dashboard/admin/news/add/", views.NewsItemCreateView.as_view(), name="news_create"),
+    path("dashboard/admin/news/<int:pk>/edit/", views.NewsItemUpdateView.as_view(), name="news_update"),
+    path("dashboard/admin/news/<int:pk>/delete/", views.NewsItemDeleteView.as_view(), name="news_delete"),
 ]
 
 

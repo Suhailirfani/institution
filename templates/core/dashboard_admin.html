@@ -7,6 +7,12 @@
 <a class="nav-link" href="{% url 'admin:index' %}">
   <i class="bi bi-gear"></i> System Settings
 </a>
+<a class="nav-link" href="{% url 'accounts:user_list' %}">
+  <i class="bi bi-person-lock"></i> User Management
+</a>
+<a class="nav-link" href="{% url 'core:news_list' %}">
+  <i class="bi bi-newspaper"></i> News Management
+</a>
 <a class="nav-link" href="{% url 'core:academicyear_list' %}">
   <i class="bi bi-calendar-range"></i> Academic Years
 </a>
@@ -33,6 +39,12 @@
 </a>
 <a class="nav-link" href="{% url 'core:job_application_list' %}">
   <i class="bi bi-briefcase"></i> Job Applications
+</a>
+<a class="nav-link" href="{% url 'core:charity_application_list' %}">
+  <i class="bi bi-heart-pulse"></i> Charity Applications
+</a>
+<a class="nav-link" href="{% url 'core:news_list' %}">
+  <i class="bi bi-megaphone"></i> Latest News
 </a>
 <a class="nav-link" href="{% url 'core:update_history' %}">
   <i class="bi bi-clock-history"></i> Update History
@@ -114,6 +126,16 @@
       <div class="col-md-3">
         <a href="#" class="btn btn-outline-primary w-100">
           <i class="bi bi-file-earmark-pdf me-2"></i>Generate Report
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a href="{% url 'core:news_create' %}" class="btn btn-outline-primary w-100">
+          <i class="bi bi-megaphone me-2"></i>Add News
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a href="{% url 'accounts:user_list' %}" class="btn btn-outline-primary w-100">
+          <i class="bi bi-people me-2"></i>Manage Users
         </a>
       </div>
       <div class="col-md-3">
