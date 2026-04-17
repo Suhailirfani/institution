@@ -2017,3 +2017,30 @@ body.landing-page::before,
 body.landing-page::after {
   z-index: -1;
 }
+
+/* ===== Floating Instagram Button ===== */
+.floating-instagram {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 28px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+}
+
+.floating-instagram:hover {
+  transform: scale(1.1);
+  box-shadow: 2px 2px 15px rgba(220, 39, 67, 0.5);
+  color: white;
+}
